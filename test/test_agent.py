@@ -6,7 +6,8 @@ import agent
 
 class TestAgent(unittest.TestCase):
 
-    def cloneRepo(self):
+    def cloneRepoTest(self):
+        #TODO: Some temporary location is needed where tests will be performed
         agent.cloneRepository('testrepo', 'testrepoview')
 
 if __name__ == '__main__':
