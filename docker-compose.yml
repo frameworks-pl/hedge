@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+    php:
+        build:
+          context: ./
+          dockerfile: ./docker/Dockerfile    
+        container_name: c-hedge
+        entrypoint: tail -f /dev/null
+        networks:
+          - n-hedge        
+        volumes:
+         - ./:/tmp/hedge
+
+networks:
+    n-hedge:
