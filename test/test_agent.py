@@ -20,17 +20,27 @@ class TestAgent(unittest.TestCase):
         return random_string
 
     def setUp(self):
-        currentDir = os.getcwd()        
-        self.testDir = currentDir + '/tmp/' + self.generateRandomString(10)
 
-        if not os.path.isdir(self.testDir + '/testrepo.zip'):
-            zipRef = zipfile.ZipFile(currentDir + '/testrepo.zip', 'r')
-            zipRef.extractall(self.testDir)
+        if not self.testDir:
+            currentDir = os.getcwd()        
+            self.testDir = currentDir + '/tmp/' + self.generateRandomString(10)
+
+            if not os.path.isdir(self.testDir + '/testrepo.zip'):
+                zipRef = zipfile.ZipFile(currentDir + '/testrepo.zip', 'r')
+                zipRef.extractall(self.testDir)
 
     def testCloneRepo(self):
         agent.cloneRepo(self.testDir + '/testrepo', self.testDir + '/testrepoview')
         logging.debug(self.testDir)
         assert(os.path.isdir(self.testDir + "/testrepoview"))
+
+    def testEnsuerFile(self):
+
+        targetFontName = self.generateRandomString(10) + '.ttf'        
+        agent.ensureFile('/fonts/myfont.tff', '/usr/local/share/fonts/hedge/' + targetFontName)
+        assert(os.path.isfile('/usr/local/share/fonts/hedge/' + targetFontName))
+
+        
 
 
 
