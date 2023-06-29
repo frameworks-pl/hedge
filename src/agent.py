@@ -1,8 +1,8 @@
 import subprocess
 import logging
 import shutil
+import argparse
 
-config = None
 
 def cloneRepo(repoUrl, destinationPath):    
     """
@@ -36,8 +36,24 @@ def ensureFile(repoAbsolutePath, destinationPath):
 
 #TODO: In first approach we will give path to the repo as parameter
 def main():
+
+    parser = argparse.ArgumentParser(prog="Hedge Agent",
+        description='Agent performing automated server configuration')
+    parser.add_argument('-r', "--repository", type=str, help='URL of the repository with server configuration')
+    args = parser.parse_args()
+
+
+    repoURL = args.repository
+    if not repoURL:
+        print("Missing repository URL")
+        exit(1)
+
+    #Assuming that the workdir for the agent willbe ~/.hedge
+    workDir = '~/.hedge'
+
+
     print('missing params')
 
     #TODO: load config, clone repo, execute target
 
-
+main()
