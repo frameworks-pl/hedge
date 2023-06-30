@@ -34,14 +34,12 @@ class TestAgent(unittest.TestCase):
         logging.debug(self.testDir)
         assert(os.path.isdir(self.testDir + "/testrepoview"))
 
-    def testEnsuerFile(self):
 
+    def testEnsuerFile(self):
         targetFontName = self.generateRandomString(10) + '.ttf'        
+        #TODO: Turn agent into class, so that we can initialize it (work dir) before we run it
         agent.ensureFile('/fonts/myfont.tff', '/usr/local/share/fonts/hedge/' + targetFontName)
         assert(os.path.isfile('/usr/local/share/fonts/hedge/' + targetFontName))
-
-        
-
 
 
 if __name__ == '__main__':

@@ -2,6 +2,9 @@ import subprocess
 import logging
 import shutil
 import argparse
+import os
+
+workDir = '~/.hedge'
 
 
 def cloneRepo(repoUrl, destinationPath):    
@@ -30,30 +33,45 @@ def ensureFile(repoAbsolutePath, destinationPath):
         Returns:
             bool: True if they are the same
     """
+    global workDir
 
     #TODO: Before actually coping the file into location, check if file is there
-    shutil.copy()
+    sourcePath = workDir + repoAbsolutePath
+    if not os.path.isfile(sourcePath):
+        logging.error("{source} does not exist".format(source=sourcePath))
+        return False;
+
+    shutil.copy(sourcePath, destinationPath)
 
 #TODO: In first approach we will give path to the repo as parameter
 def main():
 
+    global workDir
+
     parser = argparse.ArgumentParser(prog="Hedge Agent",
         description='Agent performing automated server configuration')
     parser.add_argument('-r', "--repository", type=str, help='URL of the repository with server configuration')
+    parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default='./~hedge')
     args = parser.parse_args()
 
 
     repoURL = args.repository
+    workDir = args.workdir
+    
     if not repoURL:
-        print("Missing repository URL")
-        exit(1)
-
-    #Assuming that the workdir for the agent willbe ~/.hedge
-    workDir = '~/.hedge'
+        logging.error("Missing repository URL")
+        return 1
 
 
-    print('missing params')
+    if not cloneRepo(repoURL, workDir):
+        logging.error("Failed to clone repo")
+        return 1
+    
 
     #TODO: load config, clone repo, execute target
 
-main()
+
+if __name__ == '__main__':
+    exitCode = main()
+    exit(exitCode)
+
