@@ -3,50 +3,56 @@ import logging
 import shutil
 import argparse
 import os
+import toolkit
 
-workDir = '~/.hedge'
 
+class Agent:
 
-def cloneRepo(repoUrl, destinationPath):    
-    """
-    Clones repository from which agent should take artifcats and code to be executed
+    def __init__(self, repoUrl, destinationPath = None):
+        self.repoUrl = repoUrl
+        self.destinationPath = destinationPath
+        if not self.destinationPath:
+            self.destinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
 
-    Args:
-        repoUrl (str): URL/path to git repository
-        destinationPath: Location where agent should clone the repo
-    Returns:
-        bool: True if cloning was successful
-    """
-    try:
-        subprocess.check_output(['git', 'clone', repoUrl, destinationPath])
-        return True
-    except Exception as e:
-        logging.error("Failed to clone repo {repo} to {location}".format(repo=repoUrl, location=destinationPath))
-    return False
+    def cloneRepo(self):    
+        """
+        Clones repository from which agent should take artifcats and code to be executed
 
-def ensureFile(repoAbsolutePath, destinationPath):
-    """
-        Makes sure that file from the repo and destination path are the same
         Args:
-            repoAbsolutePath (str): Path in the repository provided from the root directory of the repo
-            destinationPath (str): Absolute path on the system where the file is to be placed
+            repoUrl (str): URL/path to git repository
+            destinationPath: Location where agent should clone the repo
         Returns:
-            bool: True if they are the same
-    """
-    global workDir
+            bool: True if cloning was successful
+        """
+        try:
+            subprocess.check_output(['git', 'clone', self.repoUrl, self.destinationPath])
+            return True
+        except Exception as e:
+            logging.error("Failed to clone repo {repo} to {location}".format(repo=self.repoUrl, location=destinationPath))
+        return False
 
-    #TODO: Before actually coping the file into location, check if file is there
-    sourcePath = workDir + repoAbsolutePath
-    if not os.path.isfile(sourcePath):
-        logging.error("{source} does not exist".format(source=sourcePath))
-        return False;
+    def ensureFile(self, repoAbsolutePath, destinationPath):
+        """
+            Makes sure that file from the repo and destination path are the same
+            Args:
+                repoAbsolutePath (str): Path in the repository provided from the root directory of the repo
+                destinationPath (str): Absolute path on the system where the file is to be placed
+            Returns:
+                bool: True if they are the same
+        """
 
-    shutil.copy(sourcePath, destinationPath)
+        #TODO: Before actually coping the file into location, check if file is there
+        sourcePath = self.destinationPath + repoAbsolutePath
+        if not os.path.isfile(sourcePath):
+            logging.error("{source} does not exist".format(source=sourcePath))
+            return False
+
+        shutil.copy(sourcePath, destinationPath)
 
 #TODO: In first approach we will give path to the repo as parameter
 def main():
 
-    global workDir
+    agent = Agent()
 
     parser = argparse.ArgumentParser(prog="Hedge Agent",
         description='Agent performing automated server configuration')
@@ -56,14 +62,14 @@ def main():
 
 
     repoURL = args.repository
-    workDir = args.workdir
-    
+    agent.workDir = args.workdir
+
     if not repoURL:
         logging.error("Missing repository URL")
         return 1
 
 
-    if not cloneRepo(repoURL, workDir):
+    if not agent.cloneRepo(workDir):
         logging.error("Failed to clone repo")
         return 1
     

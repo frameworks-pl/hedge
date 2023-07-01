@@ -2,7 +2,7 @@ import unittest
 import os, sys
 srcFolder = os.path.realpath(os.getcwd() + '/../src')
 sys.path.insert(0, srcFolder)
-import agent
+from agent import Agent
 import zipfile
 import logging
 import random
@@ -12,33 +12,37 @@ logging.basicConfig(level=logging.DEBUG)
 
 class TestAgent(unittest.TestCase):
 
-    testDir = ''
+    testDir = None
 
+    @classmethod
     def generateRandomString(self, length):        
         characters = string.ascii_letters + string.digits
         random_string = ''.join(random.choice(characters) for _ in range(length))
         return random_string
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
 
-        if not self.testDir:
-            currentDir = os.getcwd()        
-            self.testDir = currentDir + '/tmp/' + self.generateRandomString(10)
-
-            if not os.path.isdir(self.testDir + '/testrepo.zip'):
+        logging.debug(TestAgent.testDir)
+        if not TestAgent.testDir:
+            currentDir = os.getcwd()
+            TestAgent.testDir = currentDir + '/tmp/' + TestAgent.generateRandomString(10)
+            if not os.path.isdir(TestAgent.testDir + '/testrepo.zip'):
                 zipRef = zipfile.ZipFile(currentDir + '/testrepo.zip', 'r')
-                zipRef.extractall(self.testDir)
+                zipRef.extractall(TestAgent.testDir)
+
+                agent = Agent(TestAgent.testDir + '/testrepo', TestAgent.testDir + '/testrepoview')
+                agent.cloneRepo()
 
     def testCloneRepo(self):
-        agent.cloneRepo(self.testDir + '/testrepo', self.testDir + '/testrepoview')
-        logging.debug(self.testDir)
-        assert(os.path.isdir(self.testDir + "/testrepoview"))
+        assert(os.path.isdir(TestAgent.testDir + "/testrepoview"))
 
 
     def testEnsuerFile(self):
-        targetFontName = self.generateRandomString(10) + '.ttf'        
+        agent = Agent(None, TestAgent.testDir + '/testrepoview')
+        targetFontName = self.generateRandomString(10) + '.tty'        
         #TODO: Turn agent into class, so that we can initialize it (work dir) before we run it
-        agent.ensureFile('/fonts/myfont.tff', '/usr/local/share/fonts/hedge/' + targetFontName)
+        agent.ensureFile('/fonts/myfont.tty', '/usr/local/share/fonts/hedge/' + targetFontName)
         assert(os.path.isfile('/usr/local/share/fonts/hedge/' + targetFontName))
 
 
