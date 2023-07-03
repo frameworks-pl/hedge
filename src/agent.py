@@ -46,6 +46,14 @@ class Agent:
         if not os.path.isfile(sourcePath):
             logging.error("{source} does not exist".format(source=sourcePath))
             return False
+        
+        targetDir = os.path.dirname(destinationPath)
+        logging.debug('Target dir is ' + targetDir)
+
+        #COMMENT: python 3.x has params to specify permissions and wether to ignore if dir exists
+        #but for Ubuntu 18 we only have python 2.x which does not have those params
+        os.makedirs(targetDir)
+
 
         shutil.copy(sourcePath, destinationPath)
 
