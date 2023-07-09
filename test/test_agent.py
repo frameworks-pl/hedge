@@ -45,6 +45,14 @@ class TestAgent(unittest.TestCase):
         agent.ensureFile('/fonts/myfont.tty', '/usr/local/share/fonts/hedge/' + targetFontName)
         assert(os.path.isfile('/usr/local/share/fonts/hedge/' + targetFontName))
 
+    def testExecuteEntryPoint(self):
+        agent = Agent(None, TestAgent.testDir + '/testrepoview')
+        agent.execute() #This should execute default target 'build', which will create /tmp/build.txt with content HedgeBuild
+        #TODO: Assert below should check if there is /tmp/build.txt exists and has content HedgeBuild
+        assert(False)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
