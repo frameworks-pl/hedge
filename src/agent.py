@@ -52,10 +52,20 @@ class Agent:
 
         #COMMENT: python 3.x has params to specify permissions and wether to ignore if dir exists
         #but for Ubuntu 18 we only have python 2.x which does not have those params
-        os.makedirs(targetDir)
-
+        if not os.path.isdir(targetDir):
+            os.makedirs(targetDir)
 
         shutil.copy(sourcePath, destinationPath)
+
+    def execute(self, target = 'build'):
+        masterFile = self.destinationPath + '/hedge.py'
+        if not os.path.isfile(masterFile):
+            logging.error("Master file ({masterFile}) could not be found.".format(masterFile=masterFile))
+            return False
+
+        #TODO: load master file, create instance of Hedge class and run target
+
+
 
 #TODO: In first approach we will give path to the repo as parameter
 def main():
