@@ -4,6 +4,7 @@ import shutil
 import argparse
 import os
 import toolkit
+import sys
 
 
 class Agent:
@@ -63,7 +64,18 @@ class Agent:
             logging.error("Master file ({masterFile}) could not be found.".format(masterFile=masterFile))
             return False
 
-        #TODO: load master file, create instance of Hedge class and run target
+        #Adding path from which we want import the master class
+        sys.path.insert(0, self.destinationPath)
+
+        #loads master file, create instance of Hedge class and run target
+        hedge_module = __import__('hedge')
+        hedge_class = getattr(hedge_module, 'Hedge')
+
+        #executs specified target
+        #TODO: finish test that checks if target has been executed and produced expected result
+        getattr(hedge_class, target)
+
+
 
 
 
