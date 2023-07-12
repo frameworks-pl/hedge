@@ -40,8 +40,7 @@ class TestAgent(unittest.TestCase):
 
     def testEnsuerFile(self):
         agent = Agent(None, TestAgent.testDir + '/testrepoview')
-        targetFontName = self.generateRandomString(10) + '.tty'        
-        #TODO: Turn agent into class, so that we can initialize it (work dir) before we run it
+        targetFontName = self.generateRandomString(10) + '.tty'                
         agent.ensureFile('/fonts/myfont.tty', '/usr/local/share/fonts/hedge/' + targetFontName)
         assert(os.path.isfile('/usr/local/share/fonts/hedge/' + targetFontName))
 
