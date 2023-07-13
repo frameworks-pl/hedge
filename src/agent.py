@@ -1,19 +1,19 @@
 import subprocess
 import logging
-import shutil
 import argparse
 import os
 import toolkit
 import sys
+import importlib
 
 
 class Agent:
 
-    def __init__(self, repoUrl, destinationPath = None):
+    def __init__(self, repoUrl, repoDestinationPath = None):
         self.repoUrl = repoUrl
-        self.destinationPath = destinationPath
-        if not self.destinationPath:
-            self.destinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
+        self.repoDestinationPath = repoDestinationPath
+        if not self.repoDestinationPath:
+            self.repoDestinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
 
     def cloneRepo(self):    
         """
@@ -21,59 +21,36 @@ class Agent:
 
         Args:
             repoUrl (str): URL/path to git repository
-            destinationPath: Location where agent should clone the repo
+            repoDestinationPath: Location where agent should clone the repo
         Returns:
             bool: True if cloning was successful
         """
         try:
-            subprocess.check_output(['git', 'clone', self.repoUrl, self.destinationPath])
+            subprocess.check_output(['git', 'clone', self.repoUrl, self.repoDestinationPath])
             return True
         except Exception as e:
-            logging.error("Failed to clone repo {repo} to {location}".format(repo=self.repoUrl, location=destinationPath))
+            logging.error("Failed to clone repo {repo} to {location}".format(repo=self.repoUrl, location=repoDestinationPath))
         return False
 
-    def ensureFile(self, repoAbsolutePath, destinationPath):
-        """
-            Makes sure that file from the repo and destination path are the same
-            Args:
-                repoAbsolutePath (str): Path in the repository provided from the root directory of the repo
-                destinationPath (str): Absolute path on the system where the file is to be placed
-            Returns:
-                bool: True if they are the same
-        """
-
-        #TODO: Before actually coping the file into location, check if file is there
-        sourcePath = self.destinationPath + repoAbsolutePath
-        if not os.path.isfile(sourcePath):
-            logging.error("{source} does not exist".format(source=sourcePath))
-            return False
-        
-        targetDir = os.path.dirname(destinationPath)
-        logging.debug('Target dir is ' + targetDir)
-
-        #COMMENT: python 3.x has params to specify permissions and wether to ignore if dir exists
-        #but for Ubuntu 18 we only have python 2.x which does not have those params
-        if not os.path.isdir(targetDir):
-            os.makedirs(targetDir)
-
-        shutil.copy(sourcePath, destinationPath)
-
-    def execute(self, target = 'build'):
-        masterFile = self.destinationPath + '/hedge.py'
+    def execute(self, target = 'build', params = {}):
+        masterFile = self.repoDestinationPath + '/hedge.py'
         if not os.path.isfile(masterFile):
             logging.error("Master file ({masterFile}) could not be found.".format(masterFile=masterFile))
             return False
 
         #Adding path from which we want import the master class
-        sys.path.insert(0, self.destinationPath)
+        sys.path.insert(0, self.repoDestinationPath)
 
         #loads master file, create instance of Hedge class and run target
-        hedge_module = __import__('hedge')
+        logging.debug("repo:" + self.repoDestinationPath)
+        hedge_module = importlib.import_module('hedge')
         hedge_class = getattr(hedge_module, 'Hedge')
+        hedgeInstance = hedge_class(self.repoDestinationPath)
 
         #executs specified target
         #TODO: finish test that checks if target has been executed and produced expected result
-        getattr(hedge_class, target)
+        targetMethod = getattr(hedgeInstance, target)        
+        targetMethod(params)
 
 
 
