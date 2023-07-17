@@ -59,8 +59,6 @@ class Agent:
 #TODO: In first approach we will give path to the repo as parameter
 def main():
 
-    agent = Agent()
-
     parser = argparse.ArgumentParser(prog="Hedge Agent",
         description='Agent performing automated server configuration')
     parser.add_argument('-r', "--repository", type=str, help='URL of the repository with server configuration')
@@ -69,6 +67,7 @@ def main():
 
 
     repoURL = args.repository
+    agent = Agent()
     agent.workDir = args.workdir
 
     if not repoURL:
