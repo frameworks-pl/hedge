@@ -6,22 +6,15 @@ libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
 sys.path.insert(0, libFolder)
 from agent import Agent
 from filehedge import FileHedge
+from test_base import TestBase
 import zipfile
 import logging
-import random
-import string
 
 logging.basicConfig(level=logging.DEBUG)
 
-class TestAgent(unittest.TestCase):
+class TestAgent(TestBase):
 
     testDir = None
-
-    @classmethod
-    def generateRandomString(self, length):        
-        characters = string.ascii_letters + string.digits
-        random_string = ''.join(random.choice(characters) for _ in range(length))
-        return random_string
 
     @classmethod
     def setUpClass(self):
@@ -29,7 +22,7 @@ class TestAgent(unittest.TestCase):
         logging.debug(TestAgent.testDir)
         if not TestAgent.testDir:
             currentDir = os.getcwd()
-            TestAgent.testDir = currentDir + '/tmp/' + TestAgent.generateRandomString(10)
+            TestAgent.testDir = currentDir + '/tmp/' + TestBase.generateRandomString(10)
             if not os.path.isdir(TestAgent.testDir + '/testrepo.zip'):
                 zipRef = zipfile.ZipFile(currentDir + '/testrepo.zip', 'r')
                 zipRef.extractall(TestAgent.testDir)
