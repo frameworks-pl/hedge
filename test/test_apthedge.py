@@ -6,11 +6,19 @@ sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
 sys.path.insert(0, libFolder)
 from apthedge import AptHedge
+from test_base import TestBase
+import argparse
 
-class TestAptHedge(unittest.TestCase):
+
+
+class TestAptHedge(TestBase):
 
     @classmethod
     def setUpClass(self):
+
+        #This will prepare test repo
+        TestBase.setUpClass()
+
         #TODO: in python 3.3 or newer we can stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
         p = subprocess.Popen(['dpkg-query', '-W', 'ncdu'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout,stderr = p.communicate();
@@ -30,7 +38,7 @@ class TestAptHedge(unittest.TestCase):
         p.communicate();
         assert(p.returncode != None)
 
-        aptHedge = AptHedge()
+        aptHedge = AptHedge(TestBase.testDir + '/testrepoview')
         aptHedge.ensurePackages(['ncdu'])
 
         p.communicate()
@@ -39,4 +47,5 @@ class TestAptHedge(unittest.TestCase):
         
 
 if __name__ == '__main__':
+
     unittest.main()    
