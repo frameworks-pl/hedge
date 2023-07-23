@@ -5,6 +5,7 @@ import logging
 import os
 import zipfile
 from agent import Agent
+import shutil
 
 class TestBase(unittest.TestCase):
 
@@ -18,6 +19,9 @@ class TestBase(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
+        if (os.path.isdir('/root/.hedge')):
+            shutil.rmtree('/root/.hedge')
+            
         logging.debug(TestBase.testDir)
         if not TestBase.testDir:
             currentDir = os.getcwd()

@@ -11,9 +11,11 @@ class Agent:
 
     def __init__(self, repoUrl, repoDestinationPath = None):
         self.repoUrl = repoUrl
-        self.repoDestinationPath = repoDestinationPath
-        if not self.repoDestinationPath:
+                
+        if not repoDestinationPath:
             self.repoDestinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
+        else:
+            self.repoDestinationPath = repoDestinationPath.replace("~", os.path.expanduser("~"))
 
     def cloneRepo(self):    
         """
@@ -25,6 +27,7 @@ class Agent:
         Returns:
             bool: True if cloning was successful
         """
+
         try:
             if not os.path.isdir(self.repoDestinationPath):
                 subprocess.check_output(['git', 'clone', self.repoUrl, self.repoDestinationPath])
@@ -64,15 +67,13 @@ def main():
     parser = argparse.ArgumentParser(prog="Hedge Agent",
         description='Agent performing automated server configuration')
     parser.add_argument('-r', "--repository", type=str, help='URL of the repository with server configuration')
-    parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default='./~hedge')
+    parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default='~/.hedge')
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
     args = parser.parse_args()
 
-
+    print(args.workdir.default)
     repoURL = args.repository
     workDIR = args.workdir
-    target = args.target
-
     agent = Agent(repoURL, workDIR)
 
     if not repoURL:

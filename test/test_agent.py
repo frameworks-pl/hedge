@@ -16,6 +16,12 @@ class TestAgent(TestBase):
     def testCloneRepo(self):
         assert(os.path.isdir(TestBase.testDir + "/testrepoview"))
 
+    def testCloneDefaultDir(self):
+        agent = Agent(TestBase.testDir + '/testrepo', None)
+        agent.cloneRepo()
+        assert(os.path.isdir('/root/.hedge/testrepo'))
+
+
 
     def testEnsuerFile(self):
         targetFontName = self.generateRandomString(10) + '.tty'                
