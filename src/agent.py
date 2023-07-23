@@ -63,11 +63,14 @@ def main():
         description='Agent performing automated server configuration')
     parser.add_argument('-r', "--repository", type=str, help='URL of the repository with server configuration')
     parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default='./~hedge')
+    parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
     args = parser.parse_args()
 
 
     repoURL = args.repository
     workDIR = args.workdir
+    target = args.target
+
     agent = Agent(repoURL, workDIR)
 
     if not repoURL:
@@ -81,6 +84,7 @@ def main():
     
 
     #TODO: load config, clone repo, execute target
+    agent.execute(target)
 
 
 if __name__ == '__main__':
