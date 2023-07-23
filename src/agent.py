@@ -71,7 +71,6 @@ def main():
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
     args = parser.parse_args()
 
-    print(args.workdir.default)
     repoURL = args.repository
     workDIR = args.workdir
     agent = Agent(repoURL, workDIR)
