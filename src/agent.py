@@ -26,7 +26,10 @@ class Agent:
             bool: True if cloning was successful
         """
         try:
-            subprocess.check_output(['git', 'clone', self.repoUrl, self.repoDestinationPath])
+            if not os.path.isdir(self.repoDestinationPath):
+                subprocess.check_output(['git', 'clone', self.repoUrl, self.repoDestinationPath])
+            else:
+                subprocess.check_output(['git', 'pull'], cwd=self.repoDestinationPath)
             return True
         except Exception as e:
             logging.error("Failed to clone repo {repo} to {location}".format(repo=self.repoUrl, location=repoDestinationPath))

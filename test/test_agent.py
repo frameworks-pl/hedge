@@ -32,6 +32,15 @@ class TestAgent(TestBase):
         #TODO: Assert below should check if there is /tmp/build.txt exists and has content HedgeBuild
         assert(os.path.isfile(TestBase.testDir + '/filehedge/testHedgeFile.txt'))
 
+    def testCloneMultipleTimes(self):
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        try:
+            #We already cloned that repo, so second call should just run update
+            agent.cloneRepo()
+        except:
+            self.fail("Cloning repo for the second time failed.")
+
+
 
 
 
