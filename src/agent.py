@@ -51,7 +51,6 @@ class Agent:
         hedgeInstance = hedge_class(self.repoDestinationPath)
 
         #executs specified target
-        #TODO: finish test that checks if target has been executed and produced expected result
         targetMethod = getattr(hedgeInstance, target)        
         targetMethod(params)
 
