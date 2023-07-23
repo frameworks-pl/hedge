@@ -73,6 +73,7 @@ def main():
 
     repoURL = args.repository
     workDIR = args.workdir
+    target = args.target
     agent = Agent(repoURL, workDIR)
 
     if not repoURL:
