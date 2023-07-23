@@ -67,15 +67,15 @@ def main():
 
 
     repoURL = args.repository
-    agent = Agent()
-    agent.workDir = args.workdir
+    workDIR = args.workdir
+    agent = Agent(repoURL, workDIR)
 
     if not repoURL:
         logging.error("Missing repository URL")
         return 1
 
 
-    if not agent.cloneRepo(workDir):
+    if not agent.cloneRepo():
         logging.error("Failed to clone repo")
         return 1
     
