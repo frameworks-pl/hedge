@@ -5,9 +5,9 @@ import os
 import toolkit
 import sys
 import importlib
-srcFolder = os.path.realpath(os.getcwd() + '/src')
+srcFolder = os.path.realpath(os.getcwd())
 sys.path.insert(0, srcFolder)
-libFolder = os.path.realpath(os.getcwd() + '/src/lib')
+libFolder = os.path.realpath(os.getcwd() + '/lib')
 sys.path.insert(0, libFolder)
 
 
