@@ -5,7 +5,7 @@ sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
 sys.path.insert(0, libFolder)
 from agent import Agent
-from filehedge import FileHedge
+
 from test_base import TestBase
 import logging
 
@@ -21,10 +21,16 @@ class TestAgent(TestBase):
         agent.cloneRepo()
         assert(os.path.isdir('/root/.hedge/testrepo'))
 
-
+    def testCloneOurLibFromClientScript(self):
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        #params = {"testDir" : TestBase.testDir}
+        print(sys.path)
+        exit
+        agent.execute('dummylibtest')
 
     def testEnsuerFile(self):
-        targetFontName = self.generateRandomString(10) + '.tty'                
+        targetFontName = self.generateRandomString(10) + '.tty'        
+        from filehedge import FileHedge
         filehedge = FileHedge(TestBase.testDir + '/testrepoview')
         filehedge.ensureFile('/fonts/myfont.tty', '/usr/local/share/fonts/hedge/' + targetFontName)
         assert(os.path.isfile('/usr/local/share/fonts/hedge/' + targetFontName))
@@ -43,10 +49,7 @@ class TestAgent(TestBase):
         except:
             self.fail("Cloning repo for the second time failed.")
 
-    def testCloneOurLibFromClientScript(self):
-        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
-        params = {"testDir" : TestBase.testDir}
-        agent.execute('dummylibtest', params)
+
 
 
 

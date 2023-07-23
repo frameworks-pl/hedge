@@ -5,6 +5,10 @@ import os
 import toolkit
 import sys
 import importlib
+srcFolder = os.path.realpath(os.getcwd() + '/src')
+sys.path.insert(0, srcFolder)
+libFolder = os.path.realpath(os.getcwd() + '/src/lib')
+sys.path.insert(0, libFolder)
 
 
 class Agent:
