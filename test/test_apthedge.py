@@ -21,11 +21,12 @@ class TestAptHedge(TestBase):
 
         #TODO: in python 3.3 or newer we can stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
         p = subprocess.Popen(['dpkg-query', '-W', 'ncdu'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout,stderr = p.communicate();
+        stdout,stderr = p.communicate()
         #p.returncode == None means success (package exists)
-        if p.returncode == None:
-            p = subprocess.Popen('apt-get', 'remove' '-y', 'ncdu')
-            stdout,stderr = p.communicate();
+        if p.returncode == 0:
+            p = subprocess.Popen(['apt-get', 'remove', '-y', 'ncdu'])
+            p.communicate()
+
 
             
     def testInstall(self):
@@ -35,14 +36,15 @@ class TestAptHedge(TestBase):
 
         #Make sure ncdu is NOT installed
         p = subprocess.Popen(['dpkg-query', '-W', 'ncdu'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        p.communicate();
-        assert(p.returncode != None)
-
-        aptHedge = AptHedge(TestBase.testDir + '/testrepoview')
-        aptHedge.ensurePackages(['ncdu'])
-
         p.communicate()
-        assert(p.returncode == None)
+        assert(p.returncode != 0)
+
+        aptHedge = AptHedge(TestBase.testDir + '/testrepoview')        
+        aptHedge.ensurePackages( ['ncdu'] )
+
+        p = subprocess.Popen(['dpkg-query', '-W', 'ncdu'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p.communicate()        
+        assert(p.returncode == 0)
 
         
 
