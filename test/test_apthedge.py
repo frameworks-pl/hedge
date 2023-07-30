@@ -31,17 +31,16 @@ class TestAptHedge(TestBase):
             
     def testInstall(self):
 
-        #TODO: setUpClass needs to run agent to clone repo!!!
-
-
         #Make sure ncdu is NOT installed
         p = subprocess.Popen(['dpkg-query', '-W', 'ncdu'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.communicate()
         assert(p.returncode != 0)
 
+        #Actually install the package (NOTE: This will fail if not run with sudo!!!)
         aptHedge = AptHedge(TestBase.testDir + '/testrepoview')        
         aptHedge.ensurePackages( ['ncdu'] )
 
+        #Check if the package IS installed
         p = subprocess.Popen(['dpkg-query', '-W', 'ncdu'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.communicate()        
         assert(p.returncode == 0)
