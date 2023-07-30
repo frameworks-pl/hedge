@@ -1,11 +1,12 @@
 import logging
 import shutil
 import os
+from basehedge import BaseHedge
 
-class FileHedge:
+class FileHedge(BaseHedge):
 
     def __init__(self, repoRootPath):
-        self.repoRootPath = repoRootPath
+        BaseHedge.__init__(self, repoRootPath)
 
     def ensureFile(self, absolutePathInRepo, destinationPath):
         """
@@ -17,10 +18,13 @@ class FileHedge:
                 bool: True if they are the same
         """
 
+        self.log.addPending("{source} -> {target}".format(source=absolutePathInRepo,target=destinationPath))
+
         #TODO: Before actually coping the file into location, check if file is there
         sourcePath = self.repoRootPath + absolutePathInRepo
         if not os.path.isfile(sourcePath):
             logging.error("{source} does not exist".format(source=sourcePath))
+            self.log.commitFAIL()
             return False
         
         targetDir = os.path.dirname(destinationPath)
@@ -32,3 +36,4 @@ class FileHedge:
             os.makedirs(targetDir)
 
         shutil.copy(sourcePath, destinationPath)    
+        self.log.commitOK() if os.path.isfile(destinationPath) else self.log.commitFAIL()

@@ -49,6 +49,10 @@ class TestAgent(TestBase):
         except:
             self.fail("Cloning repo for the second time failed.")
 
+    def testExecuteCommand(self):
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        
+
 
 
 
