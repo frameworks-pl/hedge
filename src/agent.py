@@ -29,6 +29,7 @@ class Agent:
         else:
             self.repoDestinationPath = repoDestinationPath.replace("~", os.path.expanduser("~"))
 
+
     def cloneRepo(self):    
         """
         Clones repository from which agent should take artifcats and code to be executed
@@ -51,6 +52,7 @@ class Agent:
             logging.error("Failed to clone repo {repo} to {location}".format(repo=self.repoUrl, location=self.repoDestinationPath))
         return False
 
+
     def execute(self, target = 'build', params = {}):
         masterFile = self.repoDestinationPath + '/hedge.py'
         if not os.path.isfile(masterFile):
@@ -69,9 +71,6 @@ class Agent:
         #executs specified target
         targetMethod = getattr(hedgeInstance, target)        
         targetMethod(params)
-
-
-
 
 
 #TODO: In first approach we will give path to the repo as parameter
