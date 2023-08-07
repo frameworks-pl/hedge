@@ -39,7 +39,7 @@ class Agent:
                 subprocess.check_output(['git', 'pull'], cwd=self.repoDestinationPath)
             return True
         except Exception as e:
-            logging.error("Failed to clone repo {repo} to {location}".format(repo=self.repoUrl, location=repoDestinationPath))
+            logging.error("Failed to clone repo {repo} to {location}".format(repo=self.repoUrl, location=self.repoDestinationPath))
         return False
 
     def execute(self, target = 'build', params = {}):
