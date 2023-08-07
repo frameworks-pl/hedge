@@ -13,8 +13,5 @@ class TestLog(unittest.TestCase):
         assert("This is just a test OK" == log.flush())
 
 
-        #assert('hedge' == toolkit.Toolkit.extractRepoName('/tmp/hedge'))
-
-
 if __name__ == '__main__':
     unittest.main()
