@@ -17,7 +17,7 @@ class AptHedge:
 
         packageList = ",".join(packageNames)
         
-        p = subprocess.Popen(['apt-get', 'install', '-y', packageList], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(['sudo', 'apt-get', 'install', '-y', packageList], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.communicate()
 
                 
