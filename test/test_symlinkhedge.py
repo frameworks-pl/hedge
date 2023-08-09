@@ -17,16 +17,40 @@ class TestSymlinkHedge(TestBase):
         assert(not os.path.isfile('/tmp/bootstrap.log'))
 
         #now create it
-        symlinkhedge = SymlinkHedge(TestBase.testDir + '/testrepoview')
+        symlinkhedge = SymlinkHedge()
         symlinkhedge.ensureSymlink('/var/log/bootstrap.log', '/tmp/bootstrap.log')
         assert(os.path.islink('/tmp/bootstrap.log'))
         
 
-    def testChangeExsitingSymlink(self):
-        pass
+    def testChangeExsitingSymlink(self):  
+
+        #TODO: Rather than testing it on 'python' a temp symlink should be created for this
+
+        if (os.path.islink('/tmp/python')):
+            os.remove('/tmp/python')        
+        assert(not os.path.islink('/tmp/python'))
+        os.symlink('/usr/bin/python2.7', '/tmp/python')
+        assert(os.readlink('/tmp/python') == '/usr/bin/python2.7')
+
+        #replace existing link with new one
+        symlinkhedge = SymlinkHedge()
+        symlinkhedge.ensureSymlink('/usr/bin/python3.4', '/tmp/python')
+        assert(os.path.islink('/tmp/python'))
+        assert(os.readlink('/tmp/python') == '/usr/bin/python3.4')
+
+        
 
     def testRemoveSymlink(self):
-        pass
+        if (os.path.islink('/tmp/python')):
+            os.remove('/tmp/python')        
+        assert(not os.path.islink('/tmp/python'))
+        os.symlink('/usr/bin/python2.7', '/tmp/python')
+        assert(os.readlink('/tmp/python') == '/usr/bin/python2.7')
+
+        symlinkhedge = SymlinkHedge()
+        symlinkhedge.removeSymlink('/tmp/python')
+
+        assert(not os.path.isfile('/tmp/python'))
 
 if __name__ == '__main__':
     unittest.main()

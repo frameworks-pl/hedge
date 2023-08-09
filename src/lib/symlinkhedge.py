@@ -1,11 +1,7 @@
 import unittest
 import os, sys
-from basehedge import BaseHedge
 
-class SymlinkHedge(BaseHedge):
-
-    def __init__(self, repoRootPath):
-        BaseHedge.__init__(self, repoRootPath)
+class SymlinkHedge(object):
 
     def ensureSymlink(self, realFilePath, symlinkPath):
         """
@@ -16,5 +12,22 @@ class SymlinkHedge(BaseHedge):
             Returns:
                 bool: True if symlink exists and points to the specified file
         """
+
+        #if symlink exists and points to something else than we want, remove it
+        if (os.path.islink(symlinkPath) and os.readlink(symlinkPath) != realFilePath):
+            os.remove(symlinkPath)
+
         os.symlink(realFilePath, symlinkPath)
         return os.path.islink(symlinkPath) and os.readlink(symlinkPath) == realFilePath
+
+    def removeSymlink(self, symlinkPath):
+        """
+            Removes specified symlink
+            Args:                
+                symlinkPath (str): Path to of the symlink to be removed
+            Returns:
+                bool: True if symlink (file) no longer exists
+        """
+        if (os.path.islink(symlinkPath)):
+            os.remove(symlinkPath)
+        return not os.path.isfile(symlinkPath)
