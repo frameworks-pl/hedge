@@ -1,0 +1,4 @@
+src/*.pyc
+src/lib/*.pyc
+test/*.pyc
+test/tmp
