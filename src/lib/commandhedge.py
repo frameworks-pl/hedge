@@ -1,5 +1,6 @@
 import subprocess
 from basehedge import BaseHedge
+from command import Command
 
 class CommandHedge(BaseHedge):
     
@@ -18,7 +19,7 @@ class CommandHedge(BaseHedge):
         """
 
         # Always run with sudo (second param)
-        cmd = Command(commmand, True)
+        cmd = Command(command, True)
         
         if (isinstance(command, str)):
             self.log.addPending(command)
