@@ -17,18 +17,16 @@ class CommandHedge(BaseHedge):
                 void
         """
 
+        # Always run with sudo (second param)
+        cmd = Command(commmand, True)
         
         if (isinstance(command, str)):
-            rawCmd = command.split(" ")
             self.log.addPending(command)
         else:
             # Assuming that command is already an array
-            rawCmd = command
-
-            cmd = " ".join(command)
-            self.log.addPending(cmd)
+            self.log.addPending(cmd.getAsString())
         
-        p = subprocess.Popen(rawCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(cmd.getArray(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.communicate()
 
         if (p.returncode == 0):

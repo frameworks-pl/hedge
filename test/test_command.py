@@ -23,6 +23,15 @@ class TestCommand(unittest.TestCase):
         assert('--config' == commandArr[2])
         assert('core.sshCommand=ssh -p 2222' == commandArr[3])
         assert('ssh://git@github.com/somerepo.git'== commandArr[4])
+
+    def testMakeSureCommandIsRunWithSudo(self):
+
+        # Second argument is True, which means that command should be run with sudo
+        command = Command('apt-get update', True)
+        commandArr = command.getArray()
+        assert('sudo' == commandArr[0])
+        assert('apt-get' == commandArr[1])
+        assert('update' == commandArr[2])
           
 
 
