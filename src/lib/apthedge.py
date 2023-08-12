@@ -1,6 +1,7 @@
 
 import subprocess
 from basehedge import BaseHedge
+from command import Command
 
 class AptHedge(BaseHedge):
 
@@ -16,10 +17,11 @@ class AptHedge(BaseHedge):
                 void
         """
 
-        packageList = ",".join(packageNames)
-        self.log.addPending("apt-get install -y {packets}".format(packets=packageList))
+        cmd = Command(['apt-get', 'install', '-y'], True)
+        cmd.add(packageNames)
+        self.log.addPending(cmd.getAsString())
         
-        p = subprocess.Popen(['sudo', 'apt-get', 'install', '-y', packageList], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(cmd.getArray(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.communicate()
 
         if (p.returncode == 0):
