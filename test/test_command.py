@@ -14,6 +14,7 @@ class TestCommand(unittest.TestCase):
         assert('clone' == commandArr[1])
         assert('ssh://git@github.com/somerepo.git' == commandArr[2])
 
+
     def testAddGitConfigCommand(self):
         command = Command(['git', 'clone'])
         command.add(['--config', "core.sshCommand=ssh -p {port}".format(port=2222), 'ssh://git@github.com/somerepo.git'])
@@ -24,14 +25,18 @@ class TestCommand(unittest.TestCase):
         assert('core.sshCommand=ssh -p 2222' == commandArr[3])
         assert('ssh://git@github.com/somerepo.git'== commandArr[4])
 
-    def testMakeSureCommandIsRunWithSudo(self):
 
+    def testMakeSureCommandIsRunWithSudo(self):
         # Second argument is True, which means that command should be run with sudo
         command = Command('apt-get update', True)
         commandArr = command.getArray()
         assert('sudo' == commandArr[0])
         assert('apt-get' == commandArr[1])
         assert('update' == commandArr[2])
+
+    def testIsCommandWithRedirect(self):
+        command = Command(['ls', '>', 'test.txt'])
+        assert(command.hasRedirect() == True)
           
 
 

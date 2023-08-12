@@ -11,6 +11,7 @@ class Command:
         self.commandItems = commandItems
         self.runWithSudo = runWithSudo
 
+
     def getArray(self):
 
         # check if we need to run with sudo
@@ -22,11 +23,18 @@ class Command:
 
         return self.commandItems
 
+
     def getAsString(self):
         """
         Returns final version of command as string
         """
         return " ".join(self.getArray())
 
+
     def add(self, params):
         self.commandItems.extend(params)
+
+
+    def hasRedirect(self):
+
+        return self.getAsString().find('>') != -1 or self.getAsString().find('|') != -1
