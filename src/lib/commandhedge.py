@@ -23,13 +23,14 @@ class CommandHedge(BaseHedge):
         cmd = Command(command, True)    
         self.log.addPending(cmd.getAsString())
         
-        if (cmd.hasRedirect()):
+        if cmd.hasRedirect():
             result = os.system(cmd.getAsString())
         else:
             p = subprocess.Popen(cmd.getArray(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            result = p.communicate()
+            p.communicate()
+            result = p.returncode
 
-        if (result == 0):
+        if result == 0:
             self.log.commitOK()
         else:
             self.log.commitFAIL()    
