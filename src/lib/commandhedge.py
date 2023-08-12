@@ -5,8 +5,9 @@ from command import Command
 
 class CommandHedge(BaseHedge):
     
-    def __init__(self, repoRootPath):
+    def __init__(self, repoRootPath, verbose = False):
         BaseHedge.__init__(self, repoRootPath)    
+        self.verbose = verbose
 
     def runCommand(self, command):  
         """
@@ -27,7 +28,10 @@ class CommandHedge(BaseHedge):
             result = os.system(cmd.getAsString())
         else:
             p = subprocess.Popen(cmd.getArray(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            p.communicate()
+            stdout, stderr = p.communicate()
+            if self.verbose:
+                print(stdout)
+                print(stderr)
             result = p.returncode
 
         if result == 0:

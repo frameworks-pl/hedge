@@ -18,7 +18,7 @@ from filehedge import FileHedge
 
 class Agent:
 
-    def __init__(self, repoUrl, repoDestinationPath = None, repoPort = None):
+    def __init__(self, repoUrl, repoDestinationPath = None, repoPort = None, verbose = False):
         """
         Args:
             repoUrl (str): URL/path to git repository
@@ -27,6 +27,7 @@ class Agent:
         """
         self.repoUrl = repoUrl
         self.repoPort = repoPort
+        self.verbose = verbose
                 
         if not repoDestinationPath:
             self.repoDestinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
@@ -120,6 +121,8 @@ def main():
     parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default='~/.hedge')
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
     parser.add_argument('-s', "--skip", type=bool, help='Skip cloning repository', default=False)
+    parser.add_argument('-v', "--verbose", type=bool, help='Verbose mode', default=False)
+    
     args = parser.parse_args()
 
     repoURL = args.repository
