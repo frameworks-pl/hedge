@@ -119,6 +119,7 @@ def main():
     parser.add_argument('-p', "--port", type=str, help='Port of the repository with server configuration', default=None)
     parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default='~/.hedge')
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
+    parser.add_argument('-s', "--skip", type=bool, help='Skip cloning repository', default=False)
     args = parser.parse_args()
 
     repoURL = args.repository
@@ -131,10 +132,10 @@ def main():
         logging.error("Missing repository URL")
         return 1
 
-
-    if not agent.cloneRepo():
-        logging.error("Failed to clone repo")
-        return 1
+    if not args.skip:
+        if not agent.cloneRepo():
+            logging.error("Failed to clone repo")
+            return 1
     
 
     #TODO: load config, clone repo, execute target
