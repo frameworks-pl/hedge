@@ -28,7 +28,7 @@ class Log:
 
     def flush(self):
         output = "{entry} {result}".format(entry=self.entry,result=self.result)        
-        c = Fore.GREEN if self.result == "OK" else Fore.RED
+        c = ""
         try:
             c = Fore.GREEN if self.result == "OK" else Fore.RED
         except:

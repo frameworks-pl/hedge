@@ -1,4 +1,4 @@
-src/*.pyc
+**/*.pyc
 src/lib/*.pyc
 **/__pycache__
 test/*.pyc

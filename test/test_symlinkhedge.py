@@ -6,6 +6,7 @@ libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
 sys.path.insert(0, libFolder)
 from test_base import TestBase
 from symlinkhedge import SymlinkHedge
+from agent import Agent
 
 class TestSymlinkHedge(TestBase):
 
@@ -51,6 +52,19 @@ class TestSymlinkHedge(TestBase):
         symlinkhedge.removeSymlink('/tmp/python')
 
         assert(not os.path.isfile('/tmp/python'))
+
+    def testCreateSymlinkUsingAgent(self):
+
+        if (os.path.islink('/tmp/python')):
+            os.remove('/tmp/python')        
+        assert(not os.path.islink('/tmp/python'))
+
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.ensureSymlink('/usr/bin/python2.7', '/tmp/python')
+
+        assert(os.path.islink('/tmp/python'))
+        
+
 
 if __name__ == '__main__':
     unittest.main()

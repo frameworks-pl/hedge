@@ -10,6 +10,9 @@ sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/lib')
 sys.path.insert(0, libFolder)
 from command import Command
+from symlinkhedge import SymlinkHedge
+from apthedge import AptHedge
+from commandhedge import CommandHedge
 
 
 class Agent:
@@ -71,6 +74,28 @@ class Agent:
         #executs specified target
         targetMethod = getattr(hedgeInstance, target)        
         targetMethod(params)
+
+    def ensureSymlink(self, realFilePath, symlinkPath):
+
+        """
+        See lib/symlinkhedge.py ensureSymlink for detail
+        """
+        symlinkhedge = SymlinkHedge()
+        return symlinkhedge.ensureSymlink(realFilePath, symlinkPath) 
+
+    def ensurePackages(self, packageList):
+        """
+        See lib/apthedge.py ensurePackages for details
+        """
+        aptHedge = AptHedge(self.repoDestinationPath)
+        return aptHedge.ensurePackages(packageList)        
+
+    def runCommand(self, command):
+        """
+        See lib/commandhedge.py runCommand for details
+        """
+        commandhedge = CommandHedge(self.repoDestinationPath)
+        return commandhedge.runCommand(command)
 
 
 #TODO: In first approach we will give path to the repo as parameter
