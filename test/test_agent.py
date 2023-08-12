@@ -41,6 +41,14 @@ class TestAgent(TestBase):
         agent.execute('build', params) #This should execute default target 'build', which will create /tmp/build.txt with content HedgeBuild
         assert(os.path.isfile(TestBase.testDir + '/filehedge/testHedgeFile.txt'))
 
+    def testEnsureFileViaAgent(self):
+
+        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        params = {"testDir" : TestBase.testDir}
+        agent.execute('copyfile', params)
+
+        assert(os.path.isfile(TestBase.testDir + '/filehedge/testEnsureFileViaAgent.txt'))
+
     def testCloneMultipleTimes(self):
         agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
         try:
@@ -49,8 +57,6 @@ class TestAgent(TestBase):
         except:
             self.fail("Cloning repo for the second time failed.")
 
-    def testExecuteCommand(self):
-        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
         
 
 

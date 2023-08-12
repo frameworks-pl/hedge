@@ -13,6 +13,7 @@ from command import Command
 from symlinkhedge import SymlinkHedge
 from apthedge import AptHedge
 from commandhedge import CommandHedge
+from filehedge import FileHedge
 
 
 class Agent:
@@ -62,18 +63,29 @@ class Agent:
             logging.error("Master file ({masterFile}) could not be found.".format(masterFile=masterFile))
             return False
 
-        #Adding path from which we want import the master class
+        # Adding path from which we want import the master class
         sys.path.insert(0, self.repoDestinationPath)
 
-        #loads master file, create instance of Hedge class and run target
+        # Loads master file, create instance of Hedge class and run target
         logging.debug("repo:" + self.repoDestinationPath)
         hedge_module = importlib.import_module('hedge')
         hedge_class = getattr(hedge_module, 'Hedge')
         hedgeInstance = hedge_class(self.repoDestinationPath)
 
-        #executs specified target
+        # Executs specified target
         targetMethod = getattr(hedgeInstance, target)        
-        targetMethod(params)
+
+        # 'self' here is passing instance of Agent to the target method!
+        targetMethod(self, params)
+
+
+    def ensureFile(self, absolutePathInRepo, destinationPath):
+        """
+        See lib/filehedge.py ensureFile for details
+        """
+        filehedge = FileHedge(self.repoDestinationPath)
+        return filehedge.ensureFile(absolutePathInRepo, destinationPath)
+
 
     def ensureSymlink(self, realFilePath, symlinkPath):
 
