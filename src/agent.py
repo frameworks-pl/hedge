@@ -14,6 +14,7 @@ from symlinkhedge import SymlinkHedge
 from apthedge import AptHedge
 from commandhedge import CommandHedge
 from filehedge import FileHedge
+from grouphedge import GroupHedge
 
 
 class Agent:
@@ -109,6 +110,13 @@ class Agent:
         """
         commandhedge = CommandHedge(self.repoDestinationPath)
         return commandhedge.runCommand(command)
+
+    def ensureGroup(self, groupName):
+        """
+        See lib/grouphedge.py ensureGroup for details
+        """
+        grouphedge = GroupHedge(self.repoDestinationPath)
+        return grouphedge.ensureGroup(groupName)
 
 
 #TODO: In first approach we will give path to the repo as parameter
