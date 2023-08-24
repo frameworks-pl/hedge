@@ -15,6 +15,7 @@ from apthedge import AptHedge
 from commandhedge import CommandHedge
 from filehedge import FileHedge
 from grouphedge import GroupHedge
+from userhedge import UserHedge
 
 
 class Agent:
@@ -117,6 +118,13 @@ class Agent:
         """
         grouphedge = GroupHedge(self.repoDestinationPath)
         return grouphedge.ensureGroup(groupName)
+
+    def ensureUserBelongsToGroup(self, userName, groupName):
+        """
+        See lib/useredge.py ensureUserBelongsToGroup for details
+        """
+        userhedge = UserHedge(self.repoDestinationPath)
+        return userhedge.ensureUserBelongsToGroup(userName, groupName)
 
 
 #TODO: In first approach we will give path to the repo as parameter
