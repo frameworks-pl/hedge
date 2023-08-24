@@ -1,29 +1,29 @@
 import unittest
-import os, sys
-import grp
+import os, sys, subprocess
 srcFolder = os.path.realpath(os.getcwd() + '/../src')
 sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
 sys.path.insert(0, libFolder)
 from test_base import TestBase
 from agent import Agent
+from toolkit import Toolkit
 
 class TestUserHedge(TestBase):
 
     def testUserBelongsToGroup(self):
 
         # Make sure user does not belong to group to which we want to add it
-        result = os.system("groups testuser | grep -P 'testuser\s+:\s+testgroup\s+' && echo 1 || echo 0")
-        if result != 0:
+        groups = Toolkit.getUserGroups('testuser')
+        if 'testgroup' in groups:
             os.system('gpasswd --delete testuser testgroup')
-        result = os.system("groups testuser | grep -P 'testuser\s+:\s+testgroup\s+' && echo 1 || echo 0")
-        assert(result == 0)
+        groups = Toolkit.getUserGroups('testuser')        
+        assert('testgroup' not in groups)
 
         agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
         agent.ensureUserBelongsToGroup('testuser', 'testgroup')
 
-        result = os.system("groups testuser | grep -P 'testuser\s+:\s+testgroup\s+' && echo 1 || echo 0")
-        assert(result == 1)
+        groups = Toolkit.getUserGroups('testuser')
+        assert('testgroup' in groups)
 
 
 if __name__ == '__main__':

@@ -15,6 +15,7 @@ from apthedge import AptHedge
 from commandhedge import CommandHedge
 from filehedge import FileHedge
 from grouphedge import GroupHedge
+from userhedge import UserHedge
 
 
 class Agent:
