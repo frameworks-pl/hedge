@@ -24,7 +24,7 @@ class CommandHedge(BaseHedge):
         cmd = Command(command, True)    
         self.log.addPending(cmd.getAsString())
         
-        if cmd.hasRedirect():
+        if cmd.hasRedirect() or cmd.hasInnerCommand():
             result = os.system(cmd.getAsString())
         else:
             p = subprocess.Popen(cmd.getArray(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)

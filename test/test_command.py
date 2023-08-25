@@ -37,6 +37,10 @@ class TestCommand(unittest.TestCase):
     def testIsCommandWithRedirect(self):
         command = Command(['ls', '>', 'test.txt'])
         assert(command.hasRedirect() == True)
+
+    def testIsCommandWithInnerCommand(self):
+        command = Command("curl -o \"/tmp/kubectl\" -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"")
+        assert(command.hasInnerCommand() == True)
           
 
 
