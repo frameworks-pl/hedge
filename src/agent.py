@@ -74,7 +74,7 @@ class Agent:
 
         return os.path.isdir(self.repoDestinationPath + '/' + self.TEMP_DIR)
 
-    def getTmpPath(self):
+    def getTempPath(self):
         """
         Returns path to temporary folder in target the repo folder
         Use this method to obtain path to temporary folder rather than using hardcoded paths
