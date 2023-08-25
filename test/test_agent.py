@@ -57,6 +57,14 @@ class TestAgent(TestBase):
         except:
             self.fail("Cloning repo for the second time failed.")
 
+    def testDownloadFileToTmpFolder(self):
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        print('AAA ' + agent.getTmpPath())
+        # we are trying here to download a 'well known' file from interent
+        # if this fails, it could be connection issue or this location being no longer valid
+        agent.runCommand("curl -k -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\" -o {tmp}/kubectl".format(tmp=agent.getTmpPath()))
+        assert(os.path.isfile(TestBase.testDir + "/testrepoview/{tmp}/kubectl".format(tmp=Agent.TEMP_DIR)))
+
         
 
 

@@ -20,6 +20,8 @@ from userhedge import UserHedge
 
 class Agent:
 
+    TEMP_DIR = "tmp"
+
     def __init__(self, repoUrl, repoDestinationPath = None, repoPort = None, verbose = False):
         """
         Args:
@@ -54,10 +56,30 @@ class Agent:
             else:
                 command = Command(['git', 'pull'])
                 subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
+
+            self.createTmpFolder()
+
             return True
         except Exception as e:
             logging.error("Failed to clone repo {repo} to {location}".format(repo=self.repoUrl, location=self.repoDestinationPath))
         return False
+
+    def createTmpFolder(self):
+        """
+        Creates temporary folder in target the repo folder
+        You may want to add that folder to ignored files in your repo
+        """
+        if (not os.path.isdir(self.repoDestinationPath + '/' + self.TEMP_DIR)):
+            os.makedirs(self.repoDestinationPath + '/' + self.TEMP_DIR)
+
+        return os.path.isdir(self.repoDestinationPath + '/' + self.TEMP_DIR)
+
+    def getTmpPath(self):
+        """
+        Returns path to temporary folder in target the repo folder
+        Use this method to obtain path to temporary folder rather than using hardcoded paths
+        """
+        return self.repoDestinationPath + '/' + self.TEMP_DIR
 
 
     def execute(self, target = 'build', params = {}):
