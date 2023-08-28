@@ -127,11 +127,11 @@ class Agent:
         aptHedge = AptHedge(self.repoDestinationPath)
         return aptHedge.ensurePackages(packageList)        
 
-    def runCommand(self, command):
+    def runCommand(self, command, sudo = True):
         """
         See lib/commandhedge.py runCommand for details
         """
-        commandhedge = CommandHedge(self.repoDestinationPath)
+        commandhedge = CommandHedge(self.repoDestinationPath, False, sudo)
         return commandhedge.runCommand(command)
 
     def ensureGroup(self, groupName):

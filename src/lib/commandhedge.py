@@ -5,9 +5,10 @@ from command import Command
 
 class CommandHedge(BaseHedge):
     
-    def __init__(self, repoRootPath, verbose = False):
+    def __init__(self, repoRootPath, verbose = False, sudo = True):
         BaseHedge.__init__(self, repoRootPath)    
         self.verbose = verbose
+        self.sudo = sudo
 
     def runCommand(self, command):  
         """
@@ -20,8 +21,7 @@ class CommandHedge(BaseHedge):
                 void
         """
 
-        # Always run with sudo (second param)
-        cmd = Command(command, True)    
+        cmd = Command(command, self.sudo)    
         self.log.addPending(cmd.getAsString())
         
         if cmd.hasRedirect() or cmd.hasInnerCommand():
