@@ -5,8 +5,10 @@ services:
         build:
           context: ./
           dockerfile: ./docker/Dockerfile    
-        container_name: c-hedge
+        container_name: c-hedge        
         entrypoint: tail -f /dev/null
+        cap_add:
+          - NET_ADMIN
         networks:
           - n-hedge        
         volumes:
