@@ -41,6 +41,10 @@ class TestCommand(unittest.TestCase):
     def testIsCommandWithInnerCommand(self):
         command = Command("curl -o \"/tmp/kubectl\" -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"")
         assert(command.hasInnerCommand() == True)
+
+    def testIsAndCommand(self):
+        command = Command("cd /home/user/repository && docker-compose up --build -d")
+        assert(command.isAndCommand() == True)
           
 
 

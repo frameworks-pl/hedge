@@ -33,15 +33,18 @@ class Command:
 
 
     def add(self, params):
-
         self.commandItems.extend(params)
 
 
     def hasRedirect(self):
-
         return self.getAsString().find('>') != -1 or self.getAsString().find('|') != -1    
 
-    def hasInnerCommand(self):
 
+    def hasInnerCommand(self):
         #TODO: turn this into regex matching opening and closing brackets with the inner command
         return self.getAsString().find("$(") != -1
+
+    def isAndCommand(self):
+        return self.getAsString().find("&&") != -1
+
+    
