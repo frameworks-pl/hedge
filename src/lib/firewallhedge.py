@@ -5,7 +5,7 @@ from basehedge import BaseHedge
 
 class FirewallHedge(object):
     
-    def addInputRejectionRule(self, ip, port = None, protocol = "all"):
+    def addInputRejectRule(self, ip, port = None, protocol = "all"):
         """
             Adds a rule to reject all incoming traffic from specified IP address
             
@@ -16,6 +16,18 @@ class FirewallHedge(object):
                 void
         """
         self._addRule('INPUT', 'REJECT', ip, port, protocol)
+
+    def addInputAcceptRule(self, ip, port = None, protocol = "all"):
+        """
+            Adds a rule to accept all incoming traffic from specified IP address
+            
+            Args:
+                ip (str): IP address
+                port (int): Port number
+            Returns:
+                void
+        """
+        self._addRule('INPUT', 'ACCEPT', ip, port, protocol)
 
     def _addRule(self, chain, action, ip, port, protocol):
         """
