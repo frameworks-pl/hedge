@@ -18,7 +18,7 @@ class TestFirewallHedge(TestBase):
         # Rule is NOT present
         assert(os.system('iptables --check INPUT -p all -s 10.0.0.10/32 -j REJECT >> /dev/null') != 0)
 
-        firewall = FirewallHedge()
+        firewall = FirewallHedge(TestBase.testDir + '/testrepoview')
         firewall.addInputRejectRule('10.0.0.10/32')
 
         assert(os.system('iptables --check INPUT -p all -s 10.0.0.10/32 -j REJECT >> /dev/null') == 0)
@@ -31,7 +31,7 @@ class TestFirewallHedge(TestBase):
         # Rule is NOT present
         assert(os.system('iptables --check INPUT -p all -s 10.0.0.11/32 -j ACCEPT >> /dev/null') != 0)
 
-        firewall = FirewallHedge()
+        firewall = FirewallHedge(TestBase.testDir + '/testrepoview')
         firewall.addInputAcceptRule('10.0.0.11/32')
 
         assert(os.system('iptables --check INPUT -p all -s 10.0.0.11/32 -j ACCEPT >> /dev/null') == 0)

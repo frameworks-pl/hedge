@@ -1,9 +1,10 @@
-import logging
-import shutil
 import os
 from basehedge import BaseHedge
 
-class FirewallHedge(object):
+class FirewallHedge(BaseHedge):
+
+    def __init__(self, repoRootPath):
+        BaseHedge.__init__(self, repoRootPath)    
     
     def addInputRejectRule(self, ip, port = None, protocol = "all"):
         """
@@ -52,6 +53,12 @@ class FirewallHedge(object):
             cmd += " --dport {port}".format(port=str(port))
 
         cmd += " -j {action}".format(action=action)
-        print(cmd)
-        return os.system(cmd) == 0
+        self.log.addPending(cmd)
+        result = os.system(cmd)
+        if (result != 0):
+            self.log.commitFAIL()
+        else:
+            self.log.commitOK()
+
+        return result == 0
       
