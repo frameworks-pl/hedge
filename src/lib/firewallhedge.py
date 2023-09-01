@@ -6,11 +6,8 @@ class FirewallHedge(BaseHedge):
     def __init__(self, repoRootPath):
         BaseHedge.__init__(self, repoRootPath)    
 
-    def __del__(self):              
-
-        BaseHedge.__del__(self)
     
-    def addInputRejectRule(self, ip, port = None, protocol = "all"):
+    def addInputRejectRule(self, ip, port = None, protocol = None):
         """
             Adds a rule to reject all incoming traffic from specified IP address
             
@@ -23,7 +20,7 @@ class FirewallHedge(BaseHedge):
         return self._addRule('INPUT', 'REJECT', ip, port, protocol)
 
 
-    def addInputAcceptRule(self, ip, port = None, protocol = "all"):
+    def addInputAcceptRule(self, ip, port = None, protocol = None):
         """
             Adds a rule to accept all incoming traffic from specified IP address
             
@@ -49,26 +46,36 @@ class FirewallHedge(BaseHedge):
                 Boolean: True if rule was added, False otherwise
         """
 
-        cmd = "iptables -A {chain}".format(chain=chain)
+        protocols = ['tcp', 'udp']
+        if (port == None):
+            protocols = ['all']
+
         if (protocol != None):
-            cmd += " -p {protocol}".format(protocol=protocol)
+            protocols = [protocol]                    
+        
+        result = 0
+        for p in protocols:
+            cmd = "iptables -A {chain}".format(chain=chain)
+            cmd += " -p {protocol}".format(protocol=p)
 
-        cmd += " -s {ip}".format(ip=ip)
+            cmd += " -s {ip}".format(ip=ip)
 
-        if (port != None):
-            cmd += " --dport {port}".format(port=str(port))
+            if (port != None):
+                cmd += " --dport {port}".format(port=str(port))
 
-        cmd += " -j {action}".format(action=action)
-        self.log.addPending(cmd)
-        result = os.system(cmd)
+            cmd += " -j {action}".format(action=action)
+            self.log.addPending(cmd)
+            result = os.system(cmd)
 
-        #create cronjob that will restore iptables rules on reboot
-        self._persist(cmd)
+            #create cronjob that will restore iptables rules on reboot
+            self._persist(cmd)
+
+
 
         if (result != 0):
             self.log.commitFAIL()
         else:
-            self.log.commitOK()
+            self.log.commitOK()    
 
         return result == 0
 

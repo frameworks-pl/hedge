@@ -24,7 +24,9 @@ class TestFirewallHedge(TestBase):
     @classmethod
     def _deleteTestRules(cls):
         os.system('iptables -D INPUT -p all -s 10.0.0.10/32 -j REJECT >> /dev/null')
-        os.system('iptables -D INPUT -p all -s 10.0.0.11/32 -j ACCEPT >> /dev/null')        
+        os.system('iptables -D INPUT -p all -s 10.0.0.11/32 -j ACCEPT >> /dev/null')
+        os.system('iptables -D INPUT -p tcp -s 10.0.0.12/32 --dport 5000 -j REJECT >> /dev/null')        
+        os.system('iptables -D INPUT -p udp -s 10.0.0.12/32 --dport 5000 -j REJECT >> /dev/null')            
     
     def testSimpleRejectRule(self):
 
@@ -47,6 +49,30 @@ class TestFirewallHedge(TestBase):
         with open('/etc/cron.d/hedge-rules', 'r') as f:
             content = f.read()
             assert(content.find('@reboot /etc/iptables/hedge-rules.sh') == 0)
+
+    def testRejectWithPort(self):
+        # If the rule IS present remove it before the test
+        if os.system('iptables --check INPUT -p tcp -s 10.0.0.12/32 --dport 5000 -j REJECT >> /dev/null') == 0:
+            os.system('iptables -D INPUT -p tcp -s 10.0.0.12/32 --dport 5000 -j REJECT >> /dev/null')
+
+        if os.system('iptables --check INPUT -p udp -s 10.0.0.12/32 --dport 5000 -j REJECT >> /dev/null') == 0:
+            os.system('iptables -D INPUT -p udp -s 10.0.0.12/32 --dport 5000 -j REJECT >> /dev/null')            
+            
+        # Rule is NOT present
+        assert(os.system('iptables --check INPUT -p tcp --dport 5000 -s 10.0.0.12/32 -j REJECT >> /dev/null') != 0)
+        assert(os.system('iptables --check INPUT -p udp --dport 5000 -s 10.0.0.12/32 -j REJECT >> /dev/null') != 0)
+
+        firewall = FirewallHedge(TestBase.testDir + '/testrepoview')
+        firewall.addInputRejectRule('10.0.0.12/32', 5000)
+
+        assert(os.system('iptables --check INPUT -p tcp -s 10.0.0.12/32 --dport 5000 -j REJECT >> /dev/null') == 0)
+        assert(os.system('iptables --check INPUT -p udp -s 10.0.0.12/32 --dport 5000 -j REJECT >> /dev/null') == 0)
+        assert(os.path.isfile('/etc/cron.d/hedge-rules'))
+        assert(os.path.isfile('/etc/iptables/hedge-rules.sh'))
+
+        with open('/etc/cron.d/hedge-rules', 'r') as f:
+            content = f.read()
+            assert(content.find('@reboot /etc/iptables/hedge-rules.sh') == 0)        
 
     def testSimpleAcceptRule(self):
         # If the rule IS present remove it before the test
