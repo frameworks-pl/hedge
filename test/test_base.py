@@ -31,4 +31,9 @@ class TestBase(unittest.TestCase):
                 zipRef.extractall(TestBase.testDir)
 
                 agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
-                agent.cloneRepo()            
+                agent.cloneRepo()
+
+    @classmethod
+    def tearDownClass(cls):
+        if (os.path.isdir(TestBase.testDir)):
+            shutil.rmtree(TestBase.testDir)

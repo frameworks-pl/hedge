@@ -22,6 +22,10 @@ class TestFirewallHedge(TestBase):
             os.remove('/etc/iptables/hedge-rules.sh')
 
     @classmethod
+    def tearDownClass(cls):
+        super(TestFirewallHedge, cls).tearDownClass()
+
+    @classmethod
     def _deleteTestRules(cls):
         os.system('iptables -D INPUT -p all -s 10.0.0.10/32 -j REJECT >> /dev/null')
         os.system('iptables -D INPUT -p all -s 10.0.0.11/32 -j ACCEPT >> /dev/null')

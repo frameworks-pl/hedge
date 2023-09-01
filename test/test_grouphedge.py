@@ -10,6 +10,10 @@ from agent import Agent
 
 class TestCommandHedge(TestBase):
 
+    @classmethod
+    def tearDownClass(cls):
+        super(TestCommandHedge, cls).tearDownClass()    
+
     def testCreateGroupIfNotExist(self):
         
         # if testgroup exists remove it first

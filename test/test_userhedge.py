@@ -10,6 +10,10 @@ from toolkit import Toolkit
 
 class TestUserHedge(TestBase):
 
+    @classmethod
+    def tearDownClass(cls):
+        super(TestUserHedge, cls).tearDownClass()    
+
     def testUserBelongsToGroup(self):
 
         # Make sure user does not belong to group to which we want to add it

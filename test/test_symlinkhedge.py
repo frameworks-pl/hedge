@@ -10,6 +10,10 @@ from agent import Agent
 
 class TestSymlinkHedge(TestBase):
 
+    @classmethod
+    def tearDownClass(cls):
+        super(TestSymlinkHedge, cls).tearDownClass()    
+
     def testNewSymlink(self):
         
         #if there is a symlink, remove it first

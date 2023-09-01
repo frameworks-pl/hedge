@@ -27,6 +27,10 @@ class TestAptHedge(TestBase):
         if p.returncode == 0:
             p = subprocess.Popen(['apt-get', 'remove', '-y', 'ncdu'])
             p.communicate()
+
+    @classmethod
+    def tearDownClass(cls):
+        super(TestAptHedge, cls).tearDownClass()            
             
 
     def testInstall(self):

@@ -8,6 +8,10 @@ from test_base import TestBase
 from agent import Agent
 
 class TestCommandHedge(TestBase):
+
+    @classmethod
+    def tearDownClass(cls):
+        super(TestCommandHedge, cls).tearDownClass()    
     
     def testSimpleCommand(self):
 
