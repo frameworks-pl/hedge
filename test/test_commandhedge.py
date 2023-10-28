@@ -27,5 +27,18 @@ class TestCommandHedge(TestBase):
 
         assert(os.path.isfile('/tmp/testSimpleCommand.txt') == False)
 
+    def testSysCtlCommand(self):
+        os.system('sudo sysctl -w net.bridge.bridge-nf-call-iptables=0');
+        value = None
+        with open('/proc/sys/net/bridge/bridge-nf-call-iptables', 'r') as file:
+            value = int(file.read().strip())
+        assert(value == 0)
+
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.runCommand('sudo sysctl -w net.bridge.bridge-nf-call-iptables=1')
+        with open('/proc/sys/net/bridge/bridge-nf-call-iptables', 'r') as file:
+            value = int(file.read().strip())
+        assert(value == 1) 
+
 if __name__ == '__main__':
     unittest.main()

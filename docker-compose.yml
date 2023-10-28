@@ -13,6 +13,8 @@ services:
           - n-hedge        
         volumes:
          - ./:/tmp/hedge
+        read_only: false #Needed to make sudo sysctl work
+        privileged: true #Needed to make sudo sysctl work
 
 networks:
     n-hedge:
