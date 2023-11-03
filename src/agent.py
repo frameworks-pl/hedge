@@ -177,7 +177,7 @@ def main():
     repoURL = args.repository
     workDIR = args.workdir
     target = args.target
-    agent = Agent(repoURL, workDIR, args.port, args.sshoptions)
+    agent = Agent(repoURL, workDIR, args.port, False, args.sshoptions)
 
     if not repoURL:
         logging.error("Missing repository URL")
