@@ -59,7 +59,7 @@ class Agent:
                 
                 if sshCommand.commandItems.__len__() > 0:
                     command.add(['--config', "core.sshCommand=\"ssh {sshcmd}\""
-                    .format(sshcmd=sshCommand.getArray())])
+                    .format(sshcmd=sshCommand.getAsString())])
 
                 command.add([self.repoUrl, self.repoDestinationPath])
                 subprocess.check_output(command.getArray())
@@ -177,8 +177,7 @@ def main():
     repoURL = args.repository
     workDIR = args.workdir
     target = args.target
-    port = args.port
-    agent = Agent(repoURL, workDIR, port)
+    agent = Agent(repoURL, workDIR, args.port)
 
     if not repoURL:
         logging.error("Missing repository URL")

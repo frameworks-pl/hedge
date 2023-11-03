@@ -3,6 +3,8 @@ import os, sys
 srcFolder = os.path.realpath(os.getcwd() + '/../src/lib')
 sys.path.insert(0, srcFolder)
 from command import Command
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 class TestCommand(unittest.TestCase):
 
@@ -65,7 +67,18 @@ class TestCommand(unittest.TestCase):
         masterCmd2 = Command(['--config', 'core.sshCommand=\'ssh {cmd}\''.format(cmd=command2.getAsString())])
         assert('--config core.sshCommand=\'ssh -p 2222 -o StrictHostKeyChecking=no\'' == masterCmd2.getAsString())        
 
+    def testBuildGitCloneCommandWithCustomSshParams(self):
+        command = Command(['git', 'clone'])
+        sshCommand = Command([])
+        sshCommand.add(['-p', '2017'])
+        sshCommand.add(['-o StrictHostKeyChecking=no'])
+        
+        if sshCommand.commandItems.__len__() > 0:
+            command.add(['--config', "core.sshCommand=\"ssh {sshcmd}\""
+            .format(sshcmd=sshCommand.getAsString())])
 
+        command.add(["abc", "def"])
+        assert('git clone --config core.sshCommand="ssh -p 2017 -o StrictHostKeyChecking=no" abc def' == command.getAsString())
 
 
 if __name__ == '__main__':
