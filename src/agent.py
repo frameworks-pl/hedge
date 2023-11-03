@@ -62,7 +62,7 @@ class Agent:
                     .format(sshcmd=sshCommand.getAsString())])
 
                 command.add([self.repoUrl, self.repoDestinationPath])
-                subprocess.check_output(command.getArray())
+                os.system(command.getAsString())
             else:
                 command = Command(['git', 'pull'])
                 subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
@@ -177,7 +177,7 @@ def main():
     repoURL = args.repository
     workDIR = args.workdir
     target = args.target
-    agent = Agent(repoURL, workDIR, args.port)
+    agent = Agent(repoURL, workDIR, args.port, args.sshoptions)
 
     if not repoURL:
         logging.error("Missing repository URL")
