@@ -22,7 +22,7 @@ class Agent:
 
     TEMP_DIR = "tmp"
 
-    def __init__(self, repoUrl, repoDestinationPath = None, repoPort = None, verbose = False):
+    def __init__(self, repoUrl, repoDestinationPath = None, repoPort = None, verbose = False, sshOptions = ""):
         """
         Args:
             repoUrl (str): URL/path to git repository
@@ -32,6 +32,7 @@ class Agent:
         self.repoUrl = repoUrl
         self.repoPort = repoPort
         self.verbose = verbose
+        self.sshOptions = sshOptions
                 
         if not repoDestinationPath:
             self.repoDestinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
@@ -50,7 +51,8 @@ class Agent:
             if not os.path.isdir(self.repoDestinationPath):
                 command = Command(['git', 'clone'])
                 if self.repoPort != None:
-                    command.add(['--config', "core.sshCommand=ssh -p {port}".format(port=self.repoPort)])
+                    command.add(['--config', "core.sshCommand=ssh -p {port} {sshoptions}"
+                    .format(port=self.repoPort, sshoptions=self.sshOptions)])
                 command.add([self.repoUrl, self.repoDestinationPath])
                 subprocess.check_output(command.getArray())
             else:
@@ -160,6 +162,7 @@ def main():
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
     parser.add_argument('-s', "--skip", type=bool, help='Skip cloning repository', default=False)
     parser.add_argument('-v', "--verbose", type=bool, help='Verbose mode', default=False)
+    parser.add_argument('-o', "--sshoptions", type=str, help='SSH options', default="")
     
     args = parser.parse_args()
 
