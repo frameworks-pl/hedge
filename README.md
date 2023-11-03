@@ -20,3 +20,8 @@ Hedge is a provision automation library based on Python language.
     ```
     python test.py
     ```
+
+5. run specific test
+    ```
+    python test.py <testClass>.<testMethod>
+    ```

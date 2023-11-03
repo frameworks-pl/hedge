@@ -45,7 +45,27 @@ class TestCommand(unittest.TestCase):
     def testIsAndCommand(self):
         command = Command("cd /home/user/repository && docker-compose up --build -d")
         assert(command.isAndCommand() == True)
-          
+
+    def testBuildSShParams(self):
+        command = Command([])
+        command.add(['-p', '2222'])
+        assert('-p 2222' == command.getAsString())
+        masterCmd = Command(['--config', 'core.sshCommand=\'ssh {cmd}\''.format(cmd=command.getAsString())])
+        assert('--config core.sshCommand=\'ssh -p 2222\'' == masterCmd.getAsString())
+
+        command1 = Command([])
+        command1.add(['-o StrictHostKeyChecking=no'])
+        assert('-o StrictHostKeyChecking=no' == command1.getAsString())
+        masterCmd1 = Command(['--config', 'core.sshCommand=\'ssh {cmd}\''.format(cmd=command1.getAsString())])
+        assert('--config core.sshCommand=\'ssh -o StrictHostKeyChecking=no\'' == masterCmd1.getAsString())
+
+        command2 = Command([])
+        command2.add(['-p 2222', '-o StrictHostKeyChecking=no'])
+        assert('-p 2222 -o StrictHostKeyChecking=no' == command2.getAsString())
+        masterCmd2 = Command(['--config', 'core.sshCommand=\'ssh {cmd}\''.format(cmd=command2.getAsString())])
+        assert('--config core.sshCommand=\'ssh -p 2222 -o StrictHostKeyChecking=no\'' == masterCmd2.getAsString())        
+
+
 
 
 if __name__ == '__main__':

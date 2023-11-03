@@ -50,9 +50,17 @@ class Agent:
         try:
             if not os.path.isdir(self.repoDestinationPath):
                 command = Command(['git', 'clone'])
+                sshCommand = Command([])
+
                 if self.repoPort != None:
-                    command.add(['--config', "core.sshCommand=ssh -p {port} {sshoptions}"
-                    .format(port=self.repoPort, sshoptions=self.sshOptions)])
+                    sshCommand.add(['-p', self.repoPort])
+                if self.sshOptions != "":
+                    sshCommand.add([self.sshOptions])
+                
+                if sshCommand.commandItems.__len__() > 0:
+                    command.add(['--config', "core.sshCommand=\"ssh {sshcmd}\""
+                    .format(sshcmd=sshCommand.getArray())])
+
                 command.add([self.repoUrl, self.repoDestinationPath])
                 subprocess.check_output(command.getArray())
             else:
