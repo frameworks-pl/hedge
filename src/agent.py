@@ -121,6 +121,12 @@ class Agent:
         filehedge = FileHedge(self.repoDestinationPath)
         return filehedge.ensureFile(absolutePathInRepo, destinationPath)
 
+    def ensureDir(self, destinationPath):
+        """
+        See lib/filehedge.py ensureDir for details
+        """
+        filehedge = FileHedge(self.repoDestinationPath)
+        return filehedge.ensureDir(destinationPath)
 
     def ensureSymlink(self, realFilePath, symlinkPath):
 

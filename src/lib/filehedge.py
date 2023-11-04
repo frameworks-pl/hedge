@@ -37,3 +37,19 @@ class FileHedge(BaseHedge):
 
         shutil.copy(sourcePath, destinationPath)    
         self.log.commitOK() if os.path.isfile(destinationPath) else self.log.commitFAIL()
+
+
+    def ensureDir(self, destinationPath):
+        """
+            Makes sure that directory exists
+            Args:
+                destinationPath (str): Absolute path on the system where the directory is to be placed
+            Returns:
+                bool: True if directory exists
+        """
+        self.log.addPending("Ensuring dir {target}".format(target=destinationPath))
+
+        if not os.path.isdir(destinationPath):
+            os.makedirs(destinationPath)
+
+        self.log.commitOK() if os.path.isdir(destinationPath) else self.log.commitFAIL()
