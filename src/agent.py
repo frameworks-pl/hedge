@@ -64,6 +64,7 @@ class Agent:
                 command.add([self.repoUrl, self.repoDestinationPath])
                 os.system(command.getAsString())
             else:
+                #We already cloned that repo, so second call should just run update
                 command = Command(['git', 'pull'])
                 subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
 
@@ -172,7 +173,7 @@ def main():
         description='Agent performing automated server configuration')
     parser.add_argument('-r', "--repository", type=str, help='URL of the repository with server configuration')
     parser.add_argument('-p', "--port", type=str, help='Port of the repository with server configuration', default=None)
-    parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default='~/.hedge')
+    parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default=None)
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
     parser.add_argument('-s', "--skip", type=bool, help='Skip cloning repository', default=False)
     parser.add_argument('-v', "--verbose", type=bool, help='Verbose mode', default=False)
