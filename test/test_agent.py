@@ -56,7 +56,6 @@ class TestAgent(TestBase):
     def testCloneMultipleTimes(self):
         agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
         try:
-            #We already cloned that repo, so second call should just run update
             agent.cloneRepo()
         except:
             self.fail("Cloning repo for the second time failed.")
@@ -71,7 +70,15 @@ class TestAgent(TestBase):
         agent.runCommand("curl -o \"{tmp}/kubectl\" -k -s -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"".format(tmp=agent.getTempPath()))
         assert(os.path.isfile("{tmp}/kubectl".format(tmp=agent.getTempPath())))
 
-        
+    def testDestinationFolder(self):
+        agent = Agent('/some/localy/created/git/repo')
+        assert(agent.repoDestinationPath == '/root/.hedge/repo')
+
+        agent1 = Agent("ssh://somehost.com/some/remote/git/repo")
+        assert(agent1.repoDestinationPath == '/root/.hedge/repo')
+
+        agent2 = Agent('https://github.com/frameworks-pl/hedge')
+        assert(agent2.repoDestinationPath == '/root/.hedge/hedge')
 
 
 if __name__ == '__main__':
