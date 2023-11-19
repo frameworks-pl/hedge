@@ -6,6 +6,7 @@ libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
 sys.path.insert(0, libFolder)
 from test_base import TestBase
 from agent import Agent
+from commandhedge import CommandHedge
 
 class TestCommandHedge(TestBase):
 
@@ -38,7 +39,15 @@ class TestCommandHedge(TestBase):
         agent.runCommand('sudo sysctl -w net.bridge.bridge-nf-call-iptables=1')
         with open('/proc/sys/net/bridge/bridge-nf-call-iptables', 'r') as file:
             value = int(file.read().strip())
-        assert(value == 1) 
+        assert(value == 1)
+    
+    def testGetCommandOutput(self):
+        commandHedge =   CommandHedge(TestBase.testDir + '/testrepo', False, True, True)
+        commandHedge.runCommand('echo "test"')
+        assert(commandHedge.lastCommandOutput == 'test\n')
+        #Make sure temporary file created to catch output is deleted
+        assert(os.path.isfile(commandHedge.tmpOutputPath) == False)
+
 
 if __name__ == '__main__':
     unittest.main()

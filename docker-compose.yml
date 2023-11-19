@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-    hedge:
+    hedge_master:
         build:
           context: ./
           dockerfile: ./docker/Dockerfile    
-        container_name: c-hedge        
+        container_name: c-hedge-master
         entrypoint: tail -f /dev/null
         cap_add:
           - NET_ADMIN
@@ -13,6 +13,19 @@ services:
           - n-hedge        
         volumes:
          - ./:/tmp/hedge
+        read_only: false #Needed to make sudo sysctl work
+        privileged: true #Needed to make sudo sysctl work
+
+    hedge_slave:
+        build:
+          context: ./
+          dockerfile: ./docker/Dockerfile    
+        container_name: c-hedge-slave
+        entrypoint: tail -f /dev/null
+        cap_add:
+          - NET_ADMIN
+        networks:
+          - n-hedge        
         read_only: false #Needed to make sudo sysctl work
         privileged: true #Needed to make sudo sysctl work
 

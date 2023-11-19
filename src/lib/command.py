@@ -33,7 +33,10 @@ class Command:
 
 
     def add(self, params):
-        self.commandItems.extend(params)
+        if type(params) == list:
+            self.commandItems.extend(params)
+        else:
+            self.commandItems.append(params)
 
 
     def hasRedirect(self):

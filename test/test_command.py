@@ -80,6 +80,13 @@ class TestCommand(unittest.TestCase):
         command.add(["abc", "def"])
         assert('git clone --config core.sshCommand="ssh -p 2017 -o StrictHostKeyChecking=no" abc def' == command.getAsString())
 
+    def testBuildCommandWithTeeRedirect(self):
+        command = Command("echo abc")
+        path = "/tmp/hedge_output_" +"dcde1d58-6742-43bf-bf42-80b2d31b3b76"
+        command.add("| tee " + path)
+        assert("echo abc | tee /tmp/hedge_output_dcde1d58-6742-43bf-bf42-80b2d31b3b76" == command.getAsString()) 
+
+
 
 if __name__ == '__main__':
     unittest.main()        

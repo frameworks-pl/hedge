@@ -10,7 +10,7 @@ Hedge is a provision automation library based on Python language.
     ```
 2. get into container
     ```
-    docker-exec -it c-hedge /bin/bash
+    docker-exec -it c-hedge-master /bin/bash
     ```
 3. go to test folder
     ```
