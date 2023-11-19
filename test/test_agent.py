@@ -80,6 +80,11 @@ class TestAgent(TestBase):
         agent2 = Agent('https://github.com/frameworks-pl/hedge')
         assert(agent2.repoDestinationPath == '/root/.hedge/hedge')
 
+    def testRunCommandAndGetOutput(self):
+        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent.runCommand("echo 'hello world'", True, True)
+        assert(agent.lastCommandOutput == 'hello world\n')
+
 
 if __name__ == '__main__':
     unittest.main()

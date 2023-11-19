@@ -149,7 +149,11 @@ class Agent:
         See lib/commandhedge.py runCommand for details
         """
         commandhedge = CommandHedge(self.repoDestinationPath, False, sudo, collectOutput)
-        return commandhedge.runCommand(command)
+        result = commandhedge.runCommand(command)
+        if collectOutput == True:
+            self.lastCommandOutput = commandhedge.lastCommandOutput
+
+
 
     def ensureGroup(self, groupName):
         """
