@@ -144,12 +144,12 @@ class Agent:
         aptHedge = AptHedge(self.repoDestinationPath)
         return aptHedge.ensurePackages(packageList)        
 
-    def runCommand(self, command, sudo = True, collectOutput = False):
+    def runCommand(self, command, sudo = True, collectOutput = False, user = None, host = None):
         """
         See lib/commandhedge.py runCommand for details
         """
         commandhedge = CommandHedge(self.repoDestinationPath, False, sudo, collectOutput)
-        result = commandhedge.runCommand(command)
+        result = commandhedge.runCommand(command, user, host)
         if collectOutput == True:
             self.lastCommandOutput = commandhedge.lastCommandOutput
 

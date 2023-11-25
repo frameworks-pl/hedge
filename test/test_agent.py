@@ -84,6 +84,11 @@ class TestAgent(TestBase):
         agent = Agent(None, TestBase.testDir + '/testrepoview')
         agent.runCommand("echo 'hello world'", True, True)
 
+    def testRunCommandRemotelyAndGetOutput(self):
+        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent.runCommand('cat /root/c-hedge-slave.txt', True, True,  'root', 'c-hedge-slave')
+        assert(agent.lastCommandOutput == 'c-hedge-slave')
+
 
 if __name__ == '__main__':
     unittest.main()
