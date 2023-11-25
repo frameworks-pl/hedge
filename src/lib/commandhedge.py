@@ -3,6 +3,7 @@ import os
 from basehedge import BaseHedge
 from command import Command
 import uuid
+import paramiko
 
 class CommandHedge(BaseHedge):
     
@@ -12,7 +13,7 @@ class CommandHedge(BaseHedge):
         self.sudo = sudo
         self.collectOutput = collectOutput
 
-    def runCommand(self, command):  
+    def runCommand(self, command, user = None, host = None):  
         """
             Executes a command with all its parameters
 
@@ -25,13 +26,23 @@ class CommandHedge(BaseHedge):
 
         cmd = Command(command, self.sudo)
 
-        if self.collectOutput:
+        #If we are collecting output, we need to redirect it to a temporary file
+        #but only if not running remotely
+        if self.collectOutput and (user == None and host == None):
             self.tmpOutputPath = "/tmp/hedge_output_" + str(uuid.uuid4())
             cmd.add(" | tee " + self.tmpOutputPath)
 
         self.log.addPending(cmd.getAsString())
-        
-        if cmd.hasRedirect() or cmd.hasInnerCommand() or cmd.isAndCommand():
+
+        if user != None and host != None:
+            client = paramiko.SSHClient()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect(host, username=user)
+            stdin,stdout,stderr = client.exec_command(cmd.getAsString())
+            if self.collectOutput:
+                self.lastCommandOutput = stdout.read()
+            result = stdout.channel.recv_exit_status()
+        elif cmd.hasRedirect() or cmd.hasInnerCommand() or cmd.isAndCommand():
             result = os.system(cmd.getAsString())
             if self.collectOutput:
                 with open(self.tmpOutputPath, "r") as f:

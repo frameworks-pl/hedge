@@ -48,6 +48,13 @@ class TestCommandHedge(TestBase):
         #Make sure temporary file created to catch output is deleted
         assert(os.path.isfile(commandHedge.tmpOutputPath) == False)
 
+    def testExecuteCommandRemotly(self):
+        commandHedge = CommandHedge(TestBase.testDir + '/testrepo', False, True, True)
+        commandHedge.runCommand('cat /root/c-hedge-slave.txt', 'root', 'c-hedge-slave')
+        print(commandHedge.lastCommandOutput)
+        assert(commandHedge.lastCommandOutput == 'c-hedge-slave')
+        
+
 
 if __name__ == '__main__':
     unittest.main()

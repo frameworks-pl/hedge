@@ -6,7 +6,7 @@ services:
           context: ./
           dockerfile: ./docker/Dockerfile    
         container_name: c-hedge-master
-        entrypoint: tail -f /dev/null
+        entrypoint: /usr/sbin/sshd -D
         cap_add:
           - NET_ADMIN
         networks:
@@ -21,11 +21,13 @@ services:
           context: ./
           dockerfile: ./docker/Dockerfile    
         container_name: c-hedge-slave
-        entrypoint: tail -f /dev/null
+        entrypoint: /usr/sbin/sshd -D
         cap_add:
           - NET_ADMIN
         networks:
-          - n-hedge        
+          - n-hedge
+        volumes:
+          - ./docker/c-hedge-slave.txt:/root/c-hedge-slave.txt
         read_only: false #Needed to make sudo sysctl work
         privileged: true #Needed to make sudo sysctl work
 
