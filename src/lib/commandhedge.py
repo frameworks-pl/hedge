@@ -13,7 +13,7 @@ class CommandHedge(BaseHedge):
         self.sudo = sudo
         self.collectOutput = collectOutput
 
-    def runCommand(self, command, user = None, host = None):  
+    def runCommand(self, command, user = None, host = None, keyPath = None):  
         """
             Executes a command with all its parameters
 
@@ -37,7 +37,13 @@ class CommandHedge(BaseHedge):
         if user != None and host != None:
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect(host, username=user)
+            private_key = None
+            if keyPath != None:
+                private_key = paramiko.RSAKey(filename=keyPath)
+            if private_key != None:
+                client.connect(host, username=user, pkey=private_key)
+            else:
+                client.connect(host, username=user)
             stdin,stdout,stderr = client.exec_command(cmd.getAsString())
             if self.collectOutput:
                 self.lastCommandOutput = stdout.read()
