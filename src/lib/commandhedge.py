@@ -4,6 +4,7 @@ from basehedge import BaseHedge
 from command import Command
 import uuid
 import paramiko
+import logging
 
 class CommandHedge(BaseHedge):
     
@@ -36,6 +37,8 @@ class CommandHedge(BaseHedge):
 
         if user != None and host != None:
             client = paramiko.SSHClient()
+            paramiko.util.loglevel = logging.DEBUG
+            paramiko.util.log_to_file('/tmp/paramiko.log')
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             private_key = None
             if keyPath != None:
