@@ -14,7 +14,7 @@ class SymlinkHedge(object):
         """
 
         #if symlink exists and points to something else than we want, remove it
-        if (os.path.islink(symlinkPath) and os.readlink(symlinkPath) != realFilePath):
+        if (os.path.islink(symlinkPath)):
             os.remove(symlinkPath)
 
         os.symlink(realFilePath, symlinkPath)
