@@ -57,13 +57,12 @@ class FileHedge(BaseHedge):
         paramiko.util.loglevel = logging.DEBUG
         paramiko.util.log_to_file('/tmp/paramiko.log')
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        private_key = None
         cnn_params = {
             'hostname' : host,
             'username' : user,
         }
         if keyPath != None:
-            cnn_params['pkay'] = paramiko.RSAKey(filename=keyPath)
+            cnn_params['pkey'] = paramiko.RSAKey(filename=keyPath)
         if port != None:
             cnn_params['port'] = port
 

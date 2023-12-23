@@ -94,6 +94,11 @@ class TestAgent(TestBase):
         agent.runCommand('cat /root/c-hedge-unknown.txt', True, True,  'root', 'c-hedge-unknown', '/root/.ssh/hedge_unknown')
         assert(agent.lastCommandOutput == 'c-hedge-unknown')
 
+    def testExecuteCommandRemotlyNonDefaultPort(self):
+        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent.runCommand('cat /root/c-hedge-2222.txt', True, True, 'root', 'c-hedge-2222', None, 2222)
+        assert(agent.lastCommandOutput == 'c-hedge-2222')
+
 
 if __name__ == '__main__':
     unittest.main()

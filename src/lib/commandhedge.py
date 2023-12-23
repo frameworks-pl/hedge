@@ -14,7 +14,7 @@ class CommandHedge(BaseHedge):
         self.sudo = sudo
         self.collectOutput = collectOutput
 
-    def runCommand(self, command, user = None, host = None, keyPath = None):  
+    def runCommand(self, command, user = None, host = None, keyPath = None, port = None):  
         """
             Executes a command with all its parameters
 
@@ -40,13 +40,16 @@ class CommandHedge(BaseHedge):
             paramiko.util.loglevel = logging.DEBUG
             paramiko.util.log_to_file('/tmp/paramiko.log')
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            private_key = None
+            cnn_params = {
+                'hostname' : host,
+                'username' : user,
+            }
             if keyPath != None:
-                private_key = paramiko.RSAKey(filename=keyPath)
-            if private_key != None:
-                client.connect(host, username=user, pkey=private_key)
-            else:
-                client.connect(host, username=user)
+                cnn_params['pkey'] = paramiko.RSAKey(filename=keyPath)
+            if port != None:
+                cnn_params['port'] = port
+
+            client.connect(**cnn_params)
             stdin,stdout,stderr = client.exec_command(cmd.getAsString())
             if self.collectOutput:
                 self.lastCommandOutput = stdout.read()

@@ -57,7 +57,7 @@ services:
         networks:
           - n-hedge
         volumes:
-          - ./docker/c-hedge-unknown.txt:/root/c-hedge-unknown.txt
+          - ./docker/c-hedge-2222.txt:/root/c-hedge-2222.txt
         read_only: false #Needed to make sudo sysctl work
         privileged: true #Needed to make sudo sysctl work
 
