@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 RUN apt-get update && apt-get install -y git python python-pip curl iptables openssh-server sudo
 #library needed to run ssh commands and collect output
-RUN pip install paramiko colorama
+RUN pip install paramiko colorama scp
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
 RUN sudo mkdir /var/run/sshd

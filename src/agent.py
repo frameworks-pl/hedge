@@ -122,6 +122,13 @@ class Agent:
         filehedge = FileHedge(self.repoDestinationPath)
         return filehedge.ensureFile(absolutePathInRepo, destinationPath)
 
+    def ensureFileViaSsh(self, pathOnRemoteHost, destinationPath, user = None, host = None, keyPath = None):
+        """
+        See lib/filehedge.py ensureFileFromRemote for details
+        """
+        filehedge = FileHedge(self.repoDestinationPath)
+        return filehedge.ensureFileViaSsh(pathOnRemoteHost, destinationPath, user, host, keyPath)
+
     def ensureDir(self, destinationPath):
         """
         See lib/filehedge.py ensureDir for details

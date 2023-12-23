@@ -2,6 +2,8 @@ import logging
 import shutil
 import os
 from basehedge import BaseHedge
+import paramiko
+from scp import SCPClient
 
 class FileHedge(BaseHedge):
 
@@ -37,6 +39,35 @@ class FileHedge(BaseHedge):
 
         shutil.copy(sourcePath, destinationPath)    
         self.log.commitOK() if os.path.isfile(destinationPath) else self.log.commitFAIL()
+
+    def ensureFileViaSsh(self, pathOnRemoteHost, destinationPath, user = None, host = None, keyPath = None):
+        """
+            Copies file from remote host to destination path
+            Args:
+                pathOnRemoteHost (str): Path on the remote host
+                destinationPath (str): Absolute path on the system where the file is to be placed
+                user (str): Username to use when connecting to remote host
+                host (str): Hostname to use when connecting to remote host
+                keyPath (str): Path to private key to use when connecting to remote host
+            Returns:
+                bool: True if they are the same
+        """
+        self.log.addPending("{source} -> {target}".format(source=pathOnRemoteHost,target=destinationPath))
+        client = paramiko.SSHClient()
+        paramiko.util.loglevel = logging.DEBUG
+        paramiko.util.log_to_file('/tmp/paramiko.log')
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        private_key = None
+        if keyPath != None:
+            private_key = paramiko.RSAKey(filename=keyPath)
+        if private_key != None:
+            client.connect(host, username=user, pkey=private_key)
+        else:
+            client.connect(host, username=user)
+
+        scp = SCPClient(client.get_transport())
+        scp.get(pathOnRemoteHost, destinationPath)
+
 
 
     def ensureDir(self, destinationPath):

@@ -11,3 +11,8 @@ COPY docker/hedge_unknown.pub /root/.ssh/authorized_keys
 RUN sudo chmod 600 /root/.ssh/authorized_keys
 RUN useradd -ms /bin/bash testuser
 RUN groupadd testgroup
+
+# test backupfile that will be that will be copied by scp
+RUN sudo mkdir /backup
+COPY docker/testbackup.7z  /backup/testbackup.7z
+RUN sudo chown -R testuser:testgroup /backup
