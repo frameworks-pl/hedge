@@ -1,19 +1,19 @@
 FROM ubuntu:18.04
 RUN apt-get update && apt-get install -y git python python-pip curl iptables openssh-server sudo
+
+# Chaning ssh port to 2222
+RUN sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config
+
 #library needed to run ssh commands and collect output
 RUN pip install paramiko colorama
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
 RUN sudo mkdir /var/run/sshd
 RUN sudo mkdir /root/.ssh && sudo chmod 700 /root/.ssh
-RUN sudo mkdir -p /etc/cron.d && sudo chmod 644 /etc/cron.d
-COPY docker/hedge_unknown.pub /root/.ssh/authorized_keys
+COPY docker/hedge.pub /root/.ssh/authorized_keys
 RUN sudo chmod 600 /root/.ssh/authorized_keys
-RUN useradd -ms /bin/bash testuser
-RUN groupadd testgroup
 
 # test backupfile that will be that will be copied by scp
 RUN sudo mkdir /backup
-COPY docker/testbackup.7z  /backup/testbackup.7z
-RUN sudo chown -R testuser:testgroup /backup
+COPY docker/testbackup2222.7z  /backup/testbackup2222.7z
 RUN ln -s /backup/testbackup.7z /backup/backup_latest

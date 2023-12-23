@@ -42,6 +42,17 @@ class TestFileHedge(TestBase):
         agent.ensureFileViaSsh('/backup/testbackup.7z', '/tmp/testbackup.7z', 'root', 'c-hedge-unknown', '/root/.ssh/hedge_unknown')
         assert(os.path.isfile('/tmp/testbackup.7z') == True)
 
+    def testEnsureFileViaSshNonDefaultPort(self):
+
+        #make sure file we want to copy from remote host is not here
+        if os.path.isfile('/tmp/testbackup2222.7z'):
+            os.system('rm -rf /tmp/testbackup2222.7z')
+        assert(os.path.isfile('/tmp/testbackup2222.7z') == False)
+
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.ensureFileViaSsh('/backup/testbackup2222.7z', '/tmp/testbackup2222.7z', 'root', 'c-hedge-2222', None, 2222)
+        assert(os.path.isfile('/tmp/testbackup2222.7z') == True)
+
 
 if __name__ == '__main__':
     unittest.main()

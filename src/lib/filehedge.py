@@ -40,7 +40,7 @@ class FileHedge(BaseHedge):
         shutil.copy(sourcePath, destinationPath)    
         self.log.commitOK() if os.path.isfile(destinationPath) else self.log.commitFAIL()
 
-    def ensureFileViaSsh(self, pathOnRemoteHost, destinationPath, user = None, host = None, keyPath = None):
+    def ensureFileViaSsh(self, pathOnRemoteHost, destinationPath, user = None, host = None, keyPath = None, port = None):
         """
             Copies file from remote host to destination path
             Args:
@@ -58,12 +58,16 @@ class FileHedge(BaseHedge):
         paramiko.util.log_to_file('/tmp/paramiko.log')
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         private_key = None
+        cnn_params = {
+            'hostname' : host,
+            'username' : user,
+        }
         if keyPath != None:
-            private_key = paramiko.RSAKey(filename=keyPath)
-        if private_key != None:
-            client.connect(host, username=user, pkey=private_key)
-        else:
-            client.connect(host, username=user)
+            cnn_params['pkay'] = paramiko.RSAKey(filename=keyPath)
+        if port != None:
+            cnn_params['port'] = port
+
+        client.connect(**cnn_params)
 
         scp = SCPClient(client.get_transport())
         scp.get(pathOnRemoteHost, destinationPath)

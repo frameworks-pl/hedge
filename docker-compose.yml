@@ -46,5 +46,21 @@ services:
         read_only: false #Needed to make sudo sysctl work
         privileged: true #Needed to make sudo sysctl work
 
+    hedge_2222:
+        build:
+          context: ./
+          dockerfile: ./docker/Dockerfile2222
+        container_name: c-hedge-2222
+        entrypoint: /usr/sbin/sshd -D
+        cap_add:
+          - NET_ADMIN
+        networks:
+          - n-hedge
+        volumes:
+          - ./docker/c-hedge-unknown.txt:/root/c-hedge-unknown.txt
+        read_only: false #Needed to make sudo sysctl work
+        privileged: true #Needed to make sudo sysctl work
+
+
 networks:
     n-hedge:
