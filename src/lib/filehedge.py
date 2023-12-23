@@ -71,6 +71,7 @@ class FileHedge(BaseHedge):
         scp = SCPClient(client.get_transport())
         scp.get(pathOnRemoteHost, destinationPath)
 
+        self.log.commitOK() if os.path.isfile(destinationPath) else self.log.commitFAIL()
 
 
     def ensureDir(self, destinationPath):

@@ -99,6 +99,12 @@ class TestAgent(TestBase):
         agent.runCommand('cat /root/c-hedge-2222.txt', True, True, 'root', 'c-hedge-2222', None, 2222)
         assert(agent.lastCommandOutput == 'c-hedge-2222')
 
+    def testReadSymlinkFromRemoteHost(self):
+        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent.runCommand('readlink /backup/backup_latest', True, True, 'root', 'c-hedge-2222', None, 2222)
+        stripped = agent.lastCommandOutput.decode('utf-8').rstrip()
+        assert(stripped == '/backup/testbackup.7z')
+
 
 if __name__ == '__main__':
     unittest.main()
