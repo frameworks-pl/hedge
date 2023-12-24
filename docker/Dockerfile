@@ -17,3 +17,8 @@ RUN groupadd testgroup
 # in order to connec to different host
 COPY docker/hedge_unknown /root/.ssh/hedge_unknown
 RUN sudo chmod 600 /root/.ssh/hedge_unknown
+
+# files to test chown -R *.7z
+RUN mkdir -p /root/scripts
+COPY docker/testbackup.7z /root/scripts/testbackup.7z
+COPY docker/testbackup2222.7z /root/scripts/testbackup2222.7z

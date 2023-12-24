@@ -52,7 +52,6 @@ class TestCommandHedge(TestBase):
         commandHedge = CommandHedge(TestBase.testDir + '/testrepo', False, True, True)
         commandHedge.runCommand('cat /root/c-hedge-slave.txt', 'root', 'c-hedge-slave')
         assert(commandHedge.lastCommandOutput == 'c-hedge-slave')
-        
 
 
 if __name__ == '__main__':

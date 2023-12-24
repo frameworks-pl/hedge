@@ -86,6 +86,20 @@ class TestCommand(unittest.TestCase):
         command.add("| tee " + path)
         assert("echo abc | tee /tmp/hedge_output_dcde1d58-6742-43bf-bf42-80b2d31b3b76" == command.getAsString()) 
 
+    def testIsChownCommand(self):
+        command = Command("chown -R user:group /home/user/repository")
+        assert(command.isChownCommand() == True)
+
+        command = Command("chmod 700 /home/user/repository")
+        assert(command.isChownCommand() == False)
+
+    def testHasWildcards(self):
+        command = Command("ls -l /home/user/repository/*")
+        assert(command.hasWildcards() == True)
+
+        command = Command("ls -l /home/user/repository")
+        assert(command.hasWildcards() == False)
+
 
 
 if __name__ == '__main__':

@@ -50,4 +50,10 @@ class Command:
     def isAndCommand(self):
         return self.getAsString().find("&&") != -1
 
+    def isChownCommand(self):
+        return self.getAsString().find("chown") != -1
+
+    def hasWildcards(self):
+        return self.getAsString().find("*") != -1
+
     

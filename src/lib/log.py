@@ -12,6 +12,7 @@ class Log:
         except:
             logging.warning("Colorama module not found. Colored output will not be available.")
         self.autoFlush = autoFlush
+        self.lastOutput = ""
 
     def addPending(self, entry):
         self.entry = entry
@@ -27,7 +28,7 @@ class Log:
             self.flush()        
 
     def flush(self):
-        output = "{entry} {result}".format(entry=self.entry,result=self.result)        
+        self.lastOutput = "{entry} {result}".format(entry=self.entry,result=self.result)        
         c = ""
         try:
             c = Fore.GREEN if self.result == "OK" else Fore.RED
@@ -35,4 +36,4 @@ class Log:
             pass
         print(self.entry + " " + c + self.result)
         self.entry = None
-        return output
+        return self.lastOutput

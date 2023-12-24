@@ -33,6 +33,7 @@ class Agent:
         self.repoPort = repoPort
         self.verbose = verbose
         self.sshOptions = sshOptions
+        self.lastHedgeObject = None
                 
         if not repoDestinationPath:
             self.repoDestinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
@@ -155,10 +156,10 @@ class Agent:
         """
         See lib/commandhedge.py runCommand for details
         """
-        commandhedge = CommandHedge(self.repoDestinationPath, False, sudo, collectOutput)
-        result = commandhedge.runCommand(command, user, host, keyPath, port)
+        self.lastHedgeObject = CommandHedge(self.repoDestinationPath, False, sudo, collectOutput)
+        result = self.lastHedgeObject.runCommand(command, user, host, keyPath, port)
         if collectOutput == True:
-            self.lastCommandOutput = commandhedge.lastCommandOutput
+            self.lastCommandOutput = self.lastHedgeObject.lastCommandOutput
 
 
     def ensureGroup(self, groupName):

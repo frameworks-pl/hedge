@@ -27,6 +27,11 @@ class CommandHedge(BaseHedge):
 
         cmd = Command(command, self.sudo)
 
+        #this is special case for chown with wildcard. When run with os.system, it fails
+        #so we will force collectOutput to True, in order to run with subprocess, which will fix the problem
+        if (cmd.isChownCommand() and cmd.hasWildcards()):
+            self.collectOutput = True
+
         #If we are collecting output, we need to redirect it to a temporary file
         #but only if not running remotely
         if self.collectOutput and (user == None and host == None):

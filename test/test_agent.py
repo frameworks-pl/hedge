@@ -5,6 +5,7 @@ sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
 sys.path.insert(0, libFolder)
 from agent import Agent
+import re
 
 from test_base import TestBase
 import logging
@@ -15,7 +16,6 @@ class TestAgent(TestBase):
 
     def testCloneRepo(self):
         assert(os.path.isdir(TestBase.testDir + "/testrepoview"))
-
 
     def testCloneDefaultDir(self):
         agent = Agent(TestBase.testDir + '/testrepo', None)
@@ -105,6 +105,13 @@ class TestAgent(TestBase):
         stripped = agent.lastCommandOutput.decode('utf-8').rstrip()
         assert(stripped == '/backup/testbackup.7z')
 
+    def testChownWithoutOutput(self):
+        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent.runCommand('chown -R root:root /root/scripts/*.7z')
+        pattern = r'^sudo chown -R root:root /root/scripts/\*\.7z\s+\|\s+tee /tmp/hedge_output_[a-f0-9\-]+ OK$'
+        print(agent.lastHedgeObject.log.lastOutput)
+        match = re.match(pattern, agent.lastHedgeObject.log.lastOutput)
+        assert(match)
 
 if __name__ == '__main__':
     unittest.main()
