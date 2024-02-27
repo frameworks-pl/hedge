@@ -30,7 +30,6 @@ class TestAgent(TestBase):
         exit
         agent.execute('dummylibtest')
 
-
     def testEnsuerFile(self):
         targetFontName = self.generateRandomString(10) + '.tty'        
         from filehedge import FileHedge
@@ -44,6 +43,13 @@ class TestAgent(TestBase):
         params = {"testDir" : TestBase.testDir}        
         agent.execute('build', params) #This should execute default target 'build', which will create /tmp/build.txt with content HedgeBuild
         assert(os.path.isfile(TestBase.testDir + '/filehedge/testHedgeFile.txt'))
+
+    def testExecuteFromDifferntModule(self):
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        #params = {"testDir" : TestBase.testDir}
+        params = {"testDir" : TestBase.testDir}
+        agent.execute('targetfromothermodule', params, 'anotherhedge')
+        assert(os.path.isfile(TestBase.testDir + '/filehedge/targetfromothermodule.txt' ))
 
 
     def testEnsureFileViaAgent(self):
@@ -112,6 +118,7 @@ class TestAgent(TestBase):
         print(agent.lastHedgeObject.log.lastOutput)
         match = re.match(pattern, agent.lastHedgeObject.log.lastOutput)
         assert(match)
+
 
 if __name__ == '__main__':
     unittest.main()

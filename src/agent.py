@@ -94,7 +94,7 @@ class Agent:
         return self.repoDestinationPath + '/' + self.TEMP_DIR
 
 
-    def execute(self, target = 'build', params = {}):
+    def execute(self, target = 'build', params = {}, module = 'hedge'):
         masterFile = self.repoDestinationPath + '/hedge.py'
         if not os.path.isfile(masterFile):
             logging.error("Master file ({masterFile}) could not be found.".format(masterFile=masterFile))
@@ -105,7 +105,7 @@ class Agent:
 
         # Loads master file, create instance of Hedge class and run target
         logging.debug("repo:" + self.repoDestinationPath)
-        hedge_module = importlib.import_module('hedge')
+        hedge_module = importlib.import_module(module)
         hedge_class = getattr(hedge_module, 'Hedge')
         hedgeInstance = hedge_class(self.repoDestinationPath)
 
@@ -183,6 +183,7 @@ def main():
     parser = argparse.ArgumentParser(prog="Hedge Agent",
         description='Agent performing automated server configuration')
     parser.add_argument('-r', "--repository", type=str, help='URL of the repository with server configuration')
+    parser.add_argument('-m', "--module", type=str, help='Execute target from the provided module rather than from default one (hedge)', default='hedge')
     parser.add_argument('-p', "--port", type=str, help='Port of the repository with server configuration', default=None)
     parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default=None)
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
@@ -196,6 +197,7 @@ def main():
     workDIR = args.workdir
     target = args.target
     agent = Agent(repoURL, workDIR, args.port, False, args.sshoptions)
+    module = 'hedge'
 
     if not repoURL:
         logging.error("Missing repository URL")
@@ -205,10 +207,12 @@ def main():
         if not agent.cloneRepo():
             logging.error("Failed to clone repo")
             return 1
-    
+
+    if args.module:
+        module = args.module
 
     #TODO: load config, clone repo, execute target
-    agent.execute(target)
+    agent.execute(target, {}, module)
 
 
 if __name__ == '__main__':
