@@ -7,10 +7,14 @@ Hedge is a provision automation library based on Python language.
 1. python v2 or higher    
 
 2. python paramiko library
+    ```
     sudo apt install python3-paramiko
+    ```
 
 3. python scp library
+    ```
     sudo apt install python3-scp
+    ```
 
 ## Executing 
 
