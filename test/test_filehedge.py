@@ -53,6 +53,10 @@ class TestFileHedge(TestBase):
         agent.ensureFileViaSsh('/backup/testbackup2222.7z', '/tmp/testbackup2222.7z', 'root', 'c-hedge-2222', None, 2222)
         assert(os.path.isfile('/tmp/testbackup2222.7z') == True)
 
+    def testEnsureOriginalBackedup(self):
+        #file must be there already
+        assert(os.path.isfile('/tmp/existingfile.txt'))
+
 
 if __name__ == '__main__':
     unittest.main()
