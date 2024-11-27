@@ -1,5 +1,5 @@
 import unittest
-import os, sys
+import os, sys, re
 srcFolder = os.path.realpath(os.getcwd() + '/../src')
 sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
@@ -55,10 +55,33 @@ class TestFileHedge(TestBase):
 
     def testEnsureOriginalBackup(self):
         
-        #file must be there already
+        # 1. Given old existing file in a directory
         os.system('rm -rf /tmp/existingfile*')
         os.system("echo abc > /tmp/existingfile.txt")
         assert(os.path.isfile('/tmp/existingfile.txt') == True)
+
+        # 2. When the file is replaced by hedge
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.ensureFile('/filehedge/testEnsureOriginalBackedup.txt', '/tmp/existingfile.txt')
+
+        # 3. Then file has new content and backup of old file is created
+        with open('/tmp/existingfile.txt') as file:
+            content = file.read()
+        assert(content == 'testEnsureOriginalBackedup')
+        
+
+        files = [f for f in os.listdir('/tmp') if os.path.isfile(os.path.join('/tmp', f))]
+        pattern = r"^existingfile_\d{8}\.txt"
+        backup_file = None
+        for f in files:
+            print(f)
+            if re.match(pattern, f):
+                backup_file = f
+        assert(backup_file != None)
+
+        #TODO make sure content of backup file is still the old content
+
+        
 
 
 
