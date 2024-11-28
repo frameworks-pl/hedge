@@ -79,7 +79,9 @@ class TestFileHedge(TestBase):
                 backup_file = f
         assert(backup_file != None)
 
-        #TODO make sure content of backup file is still the old content
+        with open(f"/tmp/{backup_file}") as file:
+            new_content = file.read()
+        assert(new_content == 'abc')
 
         
 

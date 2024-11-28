@@ -5,6 +5,9 @@ from basehedge import BaseHedge
 import paramiko
 from scp import SCPClient
 
+libFolder = os.path.realpath(os.getcwd() + '/..')
+sys.path.insert(0, libFolder)
+
 class FileHedge(BaseHedge):
 
     def __init__(self, repoRootPath):
@@ -36,6 +39,10 @@ class FileHedge(BaseHedge):
         #but for Ubuntu 18 we only have python 2.x which does not have those params
         if not os.path.isdir(targetDir):
             os.makedirs(targetDir)
+
+        #make backup of exiting file beofre copying new content
+        if os.path.isfile(destinationPath):
+            toolkit.Toolkit.backupFile(destinationPath)
 
         shutil.copy(sourcePath, destinationPath)    
         self.log.commitOK() if os.path.isfile(destinationPath) else self.log.commitFAIL()

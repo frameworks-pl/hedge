@@ -1,5 +1,8 @@
 import re
 import subprocess
+import shutil
+import os
+from datetime import datetime
 
 class Toolkit:
 
@@ -20,3 +23,10 @@ class Toolkit:
             return groups[1].split(" ")
 
          raise Exception("Could not get groups for user '{user}'".format(user=userName))
+
+   @staticmethod
+   def backupFile(filePath):
+      file_parts = os.path.splitext(filePath)
+      print(file_parts)
+      timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+      shutil.copy(filePath,  file_parts[0] +   '_' + timestamp + '_hedge' + file_parts[1])
