@@ -1,12 +1,13 @@
 import logging
 import shutil
-import os
+import os, sys
 from basehedge import BaseHedge
 import paramiko
 from scp import SCPClient
 
 libFolder = os.path.realpath(os.getcwd() + '/..')
 sys.path.insert(0, libFolder)
+import toolkit
 
 class FileHedge(BaseHedge):
 

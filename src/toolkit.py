@@ -26,7 +26,40 @@ class Toolkit:
 
    @staticmethod
    def backupFile(filePath):
+      """
+         Creates backup copy of a file in the same location as the file (adds timestamp and hedge)
+         Args:
+               filePath (str): Absolute path to file which is to be backed up
+         Returns:
+               bool: True if directory exists         
+      """
       file_parts = os.path.splitext(filePath)
       print(file_parts)
       timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-      shutil.copy(filePath,  file_parts[0] +   '_' + timestamp + '_hedge' + file_parts[1])
+      try: 
+         result = shutil.copy(filePath,  file_parts[0] +   '_' + timestamp + '_hedge' + file_parts[1])
+         return result
+      except Exception:
+         pass
+
+      return False
+
+   @staticmethod
+   def findFiles(filePath, pattern):
+      """
+         Finds all files that match provided pattern
+         Args:
+               filePath (str): Absolute path to directory where to look for file
+               pattern (str): patter to be used when matching files
+         Returns:
+               bool: True if directory exists         
+      """      
+      files = [f for f in os.listdir(filePath) if os.path.isfile(os.path.join(filePath, f))]
+      matching_files = []
+      for f in files:
+         print(f)
+         if re.match(pattern, f):
+            matching_files.append(f) 
+
+      return matching_files
+         

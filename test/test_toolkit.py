@@ -12,17 +12,6 @@ import re
 
 class TestToolkit(unittest.TestCase):
 
-    def findFile(self, search_path, pattern):
-        files = [f for f in os.listdir(search_path) if os.path.isfile(os.path.join(search_path, f))]
-        backup_file = None
-        for f in files:
-            print(f)
-            if re.match(pattern, f):
-                backup_file = f        
-
-        return backup_file
-
-
     def testExtractRepoName(self):
         assert('hedge' == toolkit.Toolkit.extractRepoName('/tmp/hedge'))
 
@@ -38,12 +27,13 @@ class TestToolkit(unittest.TestCase):
 
         #file with extendsion        
         toolkit.Toolkit.backupFile('/tmp/testBackup.txt')        
-        backup_file = self.findFile('/tmp', r"^testBackup_\d{8}_\d{6}_hedge\.txt")
-        assert(backup_file != None)        
+        backup_files = toolkit.Toolkit.findFiles('/tmp', r"^testBackup_\d{8}_\d{6}_hedge\.txt")
+        assert(len(backup_files) == 1)
 
         #file without extension
         toolkit.Toolkit.backupFile('/tmp/noExttestBackup')
-        backup_file = self.findFile('/tmp', r"^noExttestBackup_\d{8}_\d{6}_hedge")
+        backup_files = toolkit.Toolkit.findFiles('/tmp', r"^noExttestBackup_\d{8}_\d{6}_hedge")
+        assert(len(backup_files) == 1)
 
 
 if __name__ == '__main__':

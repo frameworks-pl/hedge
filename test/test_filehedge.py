@@ -8,6 +8,7 @@ from agent import Agent
 
 from test_base import TestBase
 import logging
+import toolkit
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -69,18 +70,12 @@ class TestFileHedge(TestBase):
             content = file.read()
         assert(content == 'testEnsureOriginalBackedup')
         
+        backup_files = toolkit.Toolkit.findFiles('/tmp', r"^existingfile_\d{8}_\d{6}_hedge\.txt")
+        assert(len(backup_files) == 1)
 
-        files = [f for f in os.listdir('/tmp') if os.path.isfile(os.path.join('/tmp', f))]
-        pattern = r"^existingfile_\d{8}\.txt"
-        backup_file = None
-        for f in files:
-            print(f)
-            if re.match(pattern, f):
-                backup_file = f
-        assert(backup_file != None)
-
-        with open(f"/tmp/{backup_file}") as file:
+        with open("/tmp/{fileName}".format(fileName=backup_files[0])) as file:
             new_content = file.read()
+        print(new_content)
         assert(new_content == 'abc')
 
         
