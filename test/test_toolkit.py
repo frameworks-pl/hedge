@@ -41,13 +41,16 @@ class TestToolkit(unittest.TestCase):
 
         #1. Given a file to backup
         os.system('rm -rf /tmp/testGoToBackupDir.txt')
-        assert(os.path.exists('/tmp/testGoToBackupDir.txt'))
+        os.system('rm -rf /tmp/backup')
+        assert(os.path.exists('/tmp/testGoToBackupDir.txt') == False)
         os.system('echo -n testGoToBackupDir > /tmp/testGoToBackupDir.txt')
 
         #2. When backup file is created with backup dir specified
         toolkit.Toolkit.backupFile('/tmp/testGoToBackupDir.txt', '/tmp/backup')
 
         #3 Then backupfile is created relative to backup dir root
+        backup_files = toolkit.Toolkit.findFiles('/tmp/backup/tmp', r"^testGoToBackupDir_\d{8}_\d{6}_hedge")
+        assert(len(backup_files) == 1)        
         
         
 

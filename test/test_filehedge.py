@@ -54,7 +54,7 @@ class TestFileHedge(TestBase):
         agent.ensureFileViaSsh('/backup/testbackup2222.7z', '/tmp/testbackup2222.7z', 'root', 'c-hedge-2222', None, 2222)
         assert(os.path.isfile('/tmp/testbackup2222.7z') == True)
 
-    def testEnsureOriginalBackup(self):
+    def testEnsureFileWithBackup(self):
         
         # 1. Given old existing file in a directory
         os.system('rm -rf /tmp/existingfile*')
@@ -75,8 +75,16 @@ class TestFileHedge(TestBase):
 
         with open("/tmp/{fileName}".format(fileName=backup_files[0])) as file:
             new_content = file.read()
-        print(new_content)
         assert(new_content == 'abc')
+
+    def testEnsureOriginalBackupToBackupFolder(self):
+
+        # 1. Given a file to be updated
+
+        # 2. When it gets updated with backup folder specified
+
+        # 3. Then file gets backed up to a folder that includes repo name and timestamp
+        pass
 
         
 

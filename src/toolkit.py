@@ -47,10 +47,10 @@ class Toolkit:
       else:
          # Fallback - create in location where the source file is
          fileParts = os.path.splitext(filePath)
-         backupFileName = fileParts[0] +   '_' + timestamp + '_hedge' + fileParts[1]
+         backupFilePath = fileParts[0] +   '_' + timestamp + '_hedge' + fileParts[1]
 
       try: 
-         result = shutil.copy(filePath,  file_parts[0] +   '_' + timestamp + '_hedge' + file_parts[1])
+         result = shutil.copy(filePath,  backupFilePath)
          return result
       except Exception:
          pass
