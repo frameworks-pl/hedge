@@ -58,7 +58,7 @@ class TestFileHedge(TestBase):
         
         # 1. Given old existing file in a directory
         os.system('rm -rf /tmp/existingfile*')
-        os.system("echo abc > /tmp/existingfile.txt")
+        os.system("echo -n abc > /tmp/existingfile.txt")
         assert(os.path.isfile('/tmp/existingfile.txt') == True)
 
         # 2. When the file is replaced by hedge

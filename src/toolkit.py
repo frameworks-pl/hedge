@@ -25,17 +25,30 @@ class Toolkit:
          raise Exception("Could not get groups for user '{user}'".format(user=userName))
 
    @staticmethod
-   def backupFile(filePath):
+   def backupFile(filePath, backupRootDir = None):
       """
          Creates backup copy of a file in the same location as the file (adds timestamp and hedge)
          Args:
                filePath (str): Absolute path to file which is to be backed up
+               backupRootDir (str): Path to the directory, relative to which backup files will be created
          Returns:
-               bool: True if directory exists         
+               path to created backup file, False if backup failed
       """
-      file_parts = os.path.splitext(filePath)
-      print(file_parts)
+
+      fileParts = os.path.splitext(os.path.basename(filePath))
       timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+      backupFileName = fileParts[0] +   '_' + timestamp + '_hedge' + fileParts[1]
+
+      if backupRootDir != None:
+         backupDir = backupRootDir + '/' + os.path.dirname(filePath)
+         if not os.path.isdir(backupDir):
+            os.makedirs(backupDir)        
+         backupFilePath = backupDir + '/' +  backupFileName
+      else:
+         # Fallback - create in location where the source file is
+         fileParts = os.path.splitext(filePath)
+         backupFileName = fileParts[0] +   '_' + timestamp + '_hedge' + fileParts[1]
+
       try: 
          result = shutil.copy(filePath,  file_parts[0] +   '_' + timestamp + '_hedge' + file_parts[1])
          return result

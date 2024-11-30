@@ -13,6 +13,7 @@ class FileHedge(BaseHedge):
 
     def __init__(self, repoRootPath):
         BaseHedge.__init__(self, repoRootPath)
+        self.backupRootDir = os.path.expanduser("~") + '/.hedge/backup'       
 
     def ensureFile(self, absolutePathInRepo, destinationPath):
         """
