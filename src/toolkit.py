@@ -27,7 +27,7 @@ class Toolkit:
    @staticmethod
    def backupFile(filePath, backupRootDir = None):
       """
-         Creates backup copy of a file in the same location as the file (adds timestamp and hedge)
+         Creates backup copy of a file in the same location as the file (unless backupRootDir is specified), adds timestamp and 'hedge' to name
          Args:
                filePath (str): Absolute path to file which is to be backed up
                backupRootDir (str): Path to the directory, relative to which backup files will be created
