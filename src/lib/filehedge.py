@@ -11,9 +11,9 @@ import toolkit
 
 class FileHedge(BaseHedge):
 
-    def __init__(self, repoRootPath):
+    def __init__(self, repoRootPath, backupPath = None):
         BaseHedge.__init__(self, repoRootPath)
-        self.backupRootDir = os.path.expanduser("~") + '/.hedge/backup'       
+        self.backupRootDir = backupPath
 
     def ensureFile(self, absolutePathInRepo, destinationPath):
         """
@@ -44,7 +44,7 @@ class FileHedge(BaseHedge):
 
         #make backup of exiting file beofre copying new content
         if os.path.isfile(destinationPath):
-            toolkit.Toolkit.backupFile(destinationPath)
+            toolkit.Toolkit.backupFile(destinationPath, self.backupRootDir)
 
         shutil.copy(sourcePath, destinationPath)    
         self.log.commitOK() if os.path.isfile(destinationPath) else self.log.commitFAIL()

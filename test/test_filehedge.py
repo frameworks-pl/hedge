@@ -69,26 +69,13 @@ class TestFileHedge(TestBase):
         with open('/tmp/existingfile.txt') as file:
             content = file.read()
         assert(content == 'testEnsureOriginalBackedup')
-        
-        backup_files = toolkit.Toolkit.findFiles('/tmp', r"^existingfile_\d{8}_\d{6}_hedge\.txt")
+                
+        backup_files = toolkit.Toolkit.findFiles(agent.fileBackupPath + '/tmp', r"^existingfile_\d{8}_\d{6}_hedge\.txt")
         assert(len(backup_files) == 1)
 
-        with open("/tmp/{fileName}".format(fileName=backup_files[0])) as file:
+        with open(agent.fileBackupPath + "/tmp/{fileName}".format(fileName=backup_files[0])) as file:
             new_content = file.read()
         assert(new_content == 'abc')
-
-    def testEnsureOriginalBackupToBackupFolder(self):
-
-        # 1. Given a file to be updated
-
-        # 2. When it gets updated with backup folder specified
-
-        # 3. Then file gets backed up to a folder that includes repo name and timestamp
-        pass
-
-        
-
-
 
 if __name__ == '__main__':
     unittest.main()

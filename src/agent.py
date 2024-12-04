@@ -5,6 +5,7 @@ import os
 import toolkit
 import sys
 import importlib
+from datetime import datetime
 srcFolder = os.path.realpath(os.getcwd())
 sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/lib')
@@ -35,6 +36,7 @@ class Agent:
         self.sshOptions = sshOptions
         self.lastHedgeObject = None
                 
+        self.fileBackupPath = os.path.expanduser("~") + '/.hedge/backup/'  + toolkit.Toolkit.extractRepoName(repoUrl) + '/' + datetime.now().strftime('%Y%m%d')
         if not repoDestinationPath:
             self.repoDestinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
         else:
@@ -120,7 +122,7 @@ class Agent:
         """
         See lib/filehedge.py ensureFile for details
         """
-        filehedge = FileHedge(self.repoDestinationPath)
+        filehedge = FileHedge(self.repoDestinationPath, self.fileBackupPath)
         return filehedge.ensureFile(absolutePathInRepo, destinationPath)
 
     def ensureFileViaSsh(self, pathOnRemoteHost, destinationPath, user = None, host = None, keyPath = None, port = None):

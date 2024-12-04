@@ -70,7 +70,6 @@ class Toolkit:
       files = [f for f in os.listdir(filePath) if os.path.isfile(os.path.join(filePath, f))]
       matching_files = []
       for f in files:
-         print(f)
          if re.match(pattern, f):
             matching_files.append(f) 
 
