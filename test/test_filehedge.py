@@ -31,6 +31,14 @@ class TestFileHedge(TestBase):
         agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
         agent.ensureDir('/tmp/testdir')
         assert(os.path.isdir('/tmp/testdir') == True)
+        
+    def testEnsureDirectoryWithUserGroupAndPermissions(self):
+    
+        # 1. Given a user belonging to a specific group
+        
+        # 2. When directory creation is requested for the user, group and permissions
+        
+        # 3. Then created directory belongs to the user, group and has proper permissions         
 
     def testEnsureFileViaSsh(self):
 
@@ -76,6 +84,7 @@ class TestFileHedge(TestBase):
         with open(agent.fileBackupPath + "/tmp/{fileName}".format(fileName=backup_files[0])) as file:
             new_content = file.read()
         assert(new_content == 'abc')
+                
 
 if __name__ == '__main__':
     unittest.main()
