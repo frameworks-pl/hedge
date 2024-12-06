@@ -132,12 +132,12 @@ class Agent:
         filehedge = FileHedge(self.repoDestinationPath)
         return filehedge.ensureFileViaSsh(pathOnRemoteHost, destinationPath, user, host, keyPath, port)
 
-    def ensureDir(self, destinationPath):
+    def ensureDir(self, destinationPath, user = None, group = None, permissions = None):
         """
         See lib/filehedge.py ensureDir for details
         """
         filehedge = FileHedge(self.repoDestinationPath)
-        return filehedge.ensureDir(destinationPath)
+        return filehedge.ensureDir(destinationPath, user, group, permissions)
 
     def ensureSymlink(self, realFilePath, symlinkPath):
 

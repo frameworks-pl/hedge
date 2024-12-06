@@ -1,6 +1,6 @@
 import logging
 import shutil
-import os, sys
+import os, sys, pwd, stat, grp
 from basehedge import BaseHedge
 import paramiko
 from scp import SCPClient
@@ -83,17 +83,48 @@ class FileHedge(BaseHedge):
         self.log.commitOK() if os.path.isfile(destinationPath) else self.log.commitFAIL()
 
 
-    def ensureDir(self, destinationPath):
+    def ensureDir(self, destinationPath, user = None, group = None, permissions = None):
         """
             Makes sure that directory exists
             Args:
                 destinationPath (str): Absolute path on the system where the directory is to be placed
+                user (str): User to which directory should belong
+                group (str): Group to which directory should belong
+                permissions (str): Permissions of the created directory
             Returns:
                 bool: True if directory exists
         """
-        self.log.addPending("Ensuring dir {target}".format(target=destinationPath))
+        pending_message = f"Ensuring dir {destinationPath}"
+        if (user):
+            pending_message += f" {user}"
+        if (group):
+            pending_message += f":{group}" if user else f" :{group}"
+        if (permissions):
+            pending_message += f" {permissions}"
+        self.log.addPending(pending_message)
 
         if not os.path.isdir(destinationPath):
             os.makedirs(destinationPath)
+        if user or group:
+            chown_cmd = "chown "
+            if user:
+                chown_cmd += f"{user}"
+            if group:
+                chown_cmd += f"{group}"
+            chown_cmd += f" {destinationPath}"
+            os.system(chown_cmd)
+        if permissions:
+            os.system(f"chmod {destinationPath} {permissions}")
 
-        self.log.commitOK() if os.path.isdir(destinationPath) else self.log.commitFAIL()
+        if os.path.isdir(destinationPath):
+            stat_info = os.stat(destinationPath)
+            if user and pwd.getpwuid(stat_info.st_uid).pw_name != user:
+                self.log.commitFAIL()
+                return
+            if group and grp.getgrgid(stat_info.st_gid) != group:
+                self.log.commitFAIL()
+                return
+        else:
+            self.log.commitFAIL()
+
+        #self.log.commitOK() if os.path.isdir(destinationPath) else self.log.commitFAIL()
