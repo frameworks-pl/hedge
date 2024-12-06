@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 RUN apt-get update && apt-get install -y git python python-pip curl iptables openssh-server sudo
 #library needed to run ssh commands and collect output
 RUN pip install paramiko colorama scp
