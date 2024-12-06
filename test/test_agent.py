@@ -119,6 +119,21 @@ class TestAgent(TestBase):
         match = re.match(pattern, agent.lastHedgeObject.log.lastOutput)
         assert(match)
 
+    def testEnsureDirectoryWithUserGroupAndPermissions(self):
+    
+        # 1. Given a user belonging to a specific group
+        if os.path.isdir('/tmp/dirowned'):
+            os.system('rm -rf /tmp/dirowned')
+        assert(os.path.isdir('/tmp/dirowned'))
+        
+        # 2. When directory creation is requested for the user, group and permissions
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
+        agent.ensureDir('/tmp/dirowned', 'testuser', 'testuser', '770')
+        
+        # 3. Then created directory belongs to the user, group and has proper permissions
+        stat_info = os.stat('/tmp/dirowned')
+        assert(pwd.getpwuid(stat_info.st_uid).pw_name == 'testuser')
+
 
 if __name__ == '__main__':
     unittest.main()
