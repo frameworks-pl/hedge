@@ -1,5 +1,5 @@
 import unittest
-import os, sys
+import os, sys, pwd
 srcFolder = os.path.realpath(os.getcwd() + '/../src')
 sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
@@ -39,7 +39,7 @@ class TestAgent(TestBase):
 
 
     def testExecuteEntryPoint(self):
-        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
         params = {"testDir" : TestBase.testDir}        
         agent.execute('build', params) #This should execute default target 'build', which will create /tmp/build.txt with content HedgeBuild
         assert(os.path.isfile(TestBase.testDir + '/filehedge/testHedgeFile.txt'))
@@ -53,7 +53,7 @@ class TestAgent(TestBase):
 
 
     def testEnsureFileViaAgent(self):
-        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
         params = {"testDir" : TestBase.testDir}
         agent.execute('copyfile', params)
         assert(os.path.isfile(TestBase.testDir + '/filehedge/testEnsureFileViaAgent.txt'))
@@ -87,37 +87,52 @@ class TestAgent(TestBase):
         assert(agent2.repoDestinationPath == '/root/.hedge/hedge')
 
     def testRunCommandAndGetOutput(self):
-        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
         agent.runCommand("echo 'hello world'", True, True)
 
     def testRunCommandRemotelyAndGetOutput(self):
-        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
         agent.runCommand('cat /root/c-hedge-slave.txt', True, True,  'root', 'c-hedge-slave')
         assert(agent.lastCommandOutput == 'c-hedge-slave')
 
     def testRunCommandRemotelyWithNonDefaultKey(self):
-        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
         agent.runCommand('cat /root/c-hedge-unknown.txt', True, True,  'root', 'c-hedge-unknown', '/root/.ssh/hedge_unknown')
         assert(agent.lastCommandOutput == 'c-hedge-unknown')
 
     def testExecuteCommandRemotlyNonDefaultPort(self):
-        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
         agent.runCommand('cat /root/c-hedge-2222.txt', True, True, 'root', 'c-hedge-2222', None, 2222)
         assert(agent.lastCommandOutput == 'c-hedge-2222')
 
     def testReadSymlinkFromRemoteHost(self):
-        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
         agent.runCommand('readlink /backup/backup_latest', True, True, 'root', 'c-hedge-2222', None, 2222)
-        stripped = agent.lastCommandOutput.decode('utf-8').rstrip()
+        stripped = agent.lastCommandOutput.rstrip()
         assert(stripped == '/backup/testbackup.7z')
 
     def testChownWithoutOutput(self):
-        agent = Agent(None, TestBase.testDir + '/testrepoview')
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
         agent.runCommand('chown -R root:root /root/scripts/*.7z')
         pattern = r'^sudo chown -R root:root /root/scripts/\*\.7z\s+\|\s+tee /tmp/hedge_output_[a-f0-9\-]+ OK$'
         print(agent.lastHedgeObject.log.lastOutput)
         match = re.match(pattern, agent.lastHedgeObject.log.lastOutput)
         assert(match)
+
+    def testEnsureDirectoryWithUserGroupAndPermissions(self):
+    
+        # 1. Given a user belonging to a specific group
+        if os.path.isdir('/tmp/dirowned'):
+            os.system('rm -rf /tmp/dirowned')
+        assert(os.path.isdir('/tmp/dirowned') == False)
+        
+        # 2. When directory creation is requested for the user, group and permissions
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
+        agent.ensureDir('/tmp/dirowned', 'testuser', 'testuser', '770')
+        
+        # 3. Then created directory belongs to the user, group and has proper permissions
+        stat_info = os.stat('/tmp/dirowned')
+        assert(pwd.getpwuid(stat_info.st_uid).pw_name == 'testuser')
 
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ class Toolkit:
    @staticmethod
    def getUserGroups(userName):
          groups = subprocess.check_output(["groups", userName]).rstrip()
-         groups = groups.split(":")
+         groups = groups.decode('utf-8').split(":")
          #we should have two groups, the first one is the user name, the second one is the list of groups
          if (len(groups) > 1):
             return groups[1].split(" ")

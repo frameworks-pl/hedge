@@ -1,5 +1,5 @@
 import unittest
-import os, sys, re
+import os, sys, re, pwd
 srcFolder = os.path.realpath(os.getcwd() + '/../src')
 sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
@@ -31,6 +31,7 @@ class TestFileHedge(TestBase):
         agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
         agent.ensureDir('/tmp/testdir')
         assert(os.path.isdir('/tmp/testdir') == True)
+
 
     def testEnsureFileViaSsh(self):
 
@@ -76,6 +77,7 @@ class TestFileHedge(TestBase):
         with open(agent.fileBackupPath + "/tmp/{fileName}".format(fileName=backup_files[0])) as file:
             new_content = file.read()
         assert(new_content == 'abc')
+                
 
 if __name__ == '__main__':
     unittest.main()

@@ -36,9 +36,9 @@ class Agent:
         self.sshOptions = sshOptions
         self.lastHedgeObject = None
                 
-        self.fileBackupPath = os.path.expanduser("~") + '/.hedge/backup/'  + toolkit.Toolkit.extractRepoName(repoUrl) + '/' + datetime.now().strftime('%Y%m%d')
+        self.fileBackupPath = os.path.expanduser("~") + '/.hedge/backup/'  + toolkit.Toolkit.extractRepoName(self.repoUrl) + '/' + datetime.now().strftime('%Y%m%d')
         if not repoDestinationPath:
-            self.repoDestinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(repoUrl)
+            self.repoDestinationPath = os.path.expanduser("~") + '/.hedge/' + toolkit.Toolkit.extractRepoName(self.repoUrl)
         else:
             self.repoDestinationPath = repoDestinationPath.replace("~", os.path.expanduser("~"))
 
@@ -132,12 +132,12 @@ class Agent:
         filehedge = FileHedge(self.repoDestinationPath)
         return filehedge.ensureFileViaSsh(pathOnRemoteHost, destinationPath, user, host, keyPath, port)
 
-    def ensureDir(self, destinationPath):
+    def ensureDir(self, destinationPath, user = None, group = None, permissions = None):
         """
         See lib/filehedge.py ensureDir for details
         """
         filehedge = FileHedge(self.repoDestinationPath)
-        return filehedge.ensureDir(destinationPath)
+        return filehedge.ensureDir(destinationPath, user, group, permissions)
 
     def ensureSymlink(self, realFilePath, symlinkPath):
 
@@ -161,7 +161,10 @@ class Agent:
         self.lastHedgeObject = CommandHedge(self.repoDestinationPath, False, sudo, collectOutput)
         result = self.lastHedgeObject.runCommand(command, user, host, keyPath, port)
         if collectOutput == True:
-            self.lastCommandOutput = self.lastHedgeObject.lastCommandOutput
+            if isinstance(self.lastHedgeObject.lastCommandOutput, bytes):
+                self.lastCommandOutput = self.lastHedgeObject.lastCommandOutput.decode('utf-8')
+            else:
+                self.lastCommandOutput = self.lastHedgeObject.lastCommandOutput
 
 
     def ensureGroup(self, groupName):

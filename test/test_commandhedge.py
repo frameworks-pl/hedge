@@ -51,7 +51,7 @@ class TestCommandHedge(TestBase):
     def testExecuteCommandRemotly(self):
         commandHedge = CommandHedge(TestBase.testDir + '/testrepo', False, True, True)
         commandHedge.runCommand('cat /root/c-hedge-slave.txt', 'root', 'c-hedge-slave')
-        assert(commandHedge.lastCommandOutput == 'c-hedge-slave')
+        assert(commandHedge.lastCommandOutput.decode('utf-8') == 'c-hedge-slave')
 
 
 if __name__ == '__main__':

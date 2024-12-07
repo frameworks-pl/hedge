@@ -1,5 +1,6 @@
-FROM ubuntu:18.04
-RUN apt-get update && apt-get install -y git python python-pip curl iptables openssh-server sudo
+FROM ubuntu:20.04
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y git python python3-pip curl iptables openssh-server sudo
+RUN cd /usr/bin && rm python && ln -s python3 python
 
 # Chaning ssh port to 2222
 RUN sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config
