@@ -1,4 +1,4 @@
-# Hedge
+# Hedge 1.0 (python 2.x)
 
 Hedge is a provision automation library based on Python language.
 
