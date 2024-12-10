@@ -1,10 +1,10 @@
-# Hedge 1.0 (python 2.x)
+# Hedge (python 3.x)
 
 Hedge is a provision automation library based on Python language.
 
 ## Requirements
 
-1. python v2 or higher    
+1. python v3 or higher    
 
 2. python paramiko library
     ```
