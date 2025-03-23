@@ -233,7 +233,7 @@ def main():
     if args.list_targets:
         targets = agent.listTargets(agent.instantiateHedge(module))
         for key in targets:
-            print(f"{key}\n") 
+            print(key.strip() + "\n") 
         return 0
 
     #TODO: load config, clone repo, execute target
