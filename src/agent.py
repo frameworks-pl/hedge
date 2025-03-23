@@ -231,9 +231,10 @@ def main():
         module = args.module
 
     if args.list_targets:
+        print("\nList of available targets (if you do not see one you are looking for, check if signature is correct):")
         targets = agent.listTargets(agent.instantiateHedge(module))
         for key in targets:
-            print(key.strip() + "\n") 
+            print(key) 
         return 0
 
     #TODO: load config, clone repo, execute target
