@@ -134,6 +134,35 @@ class TestAgent(TestBase):
         stat_info = os.stat('/tmp/dirowned')
         assert(pwd.getpwuid(stat_info.st_uid).pw_name == 'testuser')
 
+    def testListAvailableTargets(self):
+
+        #1. Given sample hedge script with targets
+        from sample_hedge import Hedge
+        assert(Hedge is not None)
+
+        #2. When collect_targets target called, then list of targets is returned
+        agent = Agent(TestBase.testDir + '/testrep', TestBase.testDir + '/testrepoview')
+        hedge = Hedge(agent.repoDestinationPath)
+        targets = agent.listTargets(hedge)
+        #targets = hedge.collect_targets(agent, {})
+
+        #3. Then all available targets are collected
+        print(targets)
+        assert(2 == len(targets.keys()))
+        assert(3 == len(targets['target1']['parameters']))
+        assert('self' == targets['target1']['parameters'][0])
+        assert('agent' == targets['target1']['parameters'][1])
+        assert('params' == targets['target1']['parameters'][2])
+        assert(3 == len(targets['target2']['parameters']))
+        assert('self' == targets['target2']['parameters'][0])
+        assert('agent' == targets['target2']['parameters'][1])
+        assert('params' == targets['target2']['parameters'][2])
+
+
+
+        
+
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -5,6 +5,7 @@ import os
 import toolkit
 import sys
 import importlib
+import inspect
 from datetime import datetime
 srcFolder = os.path.realpath(os.getcwd())
 sys.path.insert(0, srcFolder)
@@ -94,9 +95,8 @@ class Agent:
         Use this method to obtain path to temporary folder rather than using hardcoded paths
         """
         return self.repoDestinationPath + '/' + self.TEMP_DIR
-
-
-    def execute(self, target = 'build', params = {}, module = 'hedge'):
+    
+    def instantiateHedge(self, module):
         masterFile = self.repoDestinationPath + '/hedge.py'
         if not os.path.isfile(masterFile):
             logging.error("Master file ({masterFile}) could not be found.".format(masterFile=masterFile))
@@ -109,10 +109,14 @@ class Agent:
         logging.debug("repo:" + self.repoDestinationPath)
         hedge_module = importlib.import_module(module)
         hedge_class = getattr(hedge_module, 'Hedge')
-        hedgeInstance = hedge_class(self.repoDestinationPath)
+        return hedge_class(self.repoDestinationPath)
+
+
+    def execute(self, target = 'build', params = {}, module = 'hedge'):
+        hedgeInstance = self.instantiateHedge(module)
 
         # Executs specified target
-        targetMethod = getattr(hedgeInstance, target)        
+        targetMethod = getattr(hedgeInstance, target)
 
         # 'self' here is passing instance of Agent to the target method!
         targetMethod(self, params)
@@ -180,6 +184,15 @@ class Agent:
         """
         userhedge = UserHedge(self.repoDestinationPath)
         return userhedge.ensureUserBelongsToGroup(userName, groupName)
+    
+    def listTargets(self, hedge_obj):
+        methods = {}
+        for name, func in inspect.getmembers(hedge_obj.__class__, inspect.isfunction):
+            if not name.startswith("_"):
+                params = list(inspect.signature(func).parameters.keys())
+                if len(params) == 3 and params[0] == 'self' and params[1] == 'agent' and params[2] == 'params':
+                    methods[name]= {'parameters' :params}
+        return methods
 
 
 #TODO: In first approach we will give path to the repo as parameter
@@ -192,6 +205,7 @@ def main():
     parser.add_argument('-p', "--port", type=str, help='Port of the repository with server configuration', default=None)
     parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default=None)
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
+    parser.add_argument('-lt', "--list-targets", help="List available arguments")
     parser.add_argument('-s', "--skip", type=bool, help='Skip cloning repository', default=False)
     parser.add_argument('-v', "--verbose", type=bool, help='Verbose mode', default=False)
     parser.add_argument('-o', "--sshoptions", type=str, help='SSH options', default="")
@@ -215,6 +229,12 @@ def main():
 
     if args.module:
         module = args.module
+
+    if args.list_targets:
+        targets = agent.listTargets(agent.instantiateHedge(module))
+        for key in targets:
+            print(f"{key}\n") 
+        return 0
 
     #TODO: load config, clone repo, execute target
     agent.execute(target, {}, module)
