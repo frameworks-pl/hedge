@@ -205,7 +205,7 @@ def main():
     parser.add_argument('-p', "--port", type=str, help='Port of the repository with server configuration', default=None)
     parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default=None)
     parser.add_argument('-t', "--target", type=str, help='Target to execute', default='build')
-    parser.add_argument('-lt', "--list-targets", help="List available arguments")
+    parser.add_argument('-lt', "--list-targets", help="List available arguments", nargs='?')
     parser.add_argument('-s', "--skip", type=bool, help='Skip cloning repository', default=False)
     parser.add_argument('-v', "--verbose", type=bool, help='Verbose mode', default=False)
     parser.add_argument('-o', "--sshoptions", type=str, help='SSH options', default="")
