@@ -44,7 +44,7 @@ class Agent:
             self.repoDestinationPath = repoDestinationPath.replace("~", os.path.expanduser("~"))
 
 
-    def cloneRepo(self):    
+    def cloneRepo(self, branchName = None):    
         """
         Clones repository from which agent should take artifcats and code to be executed
         Returns:
@@ -55,6 +55,9 @@ class Agent:
             if not os.path.isdir(self.repoDestinationPath):
                 command = Command(['git', 'clone'])
                 sshCommand = Command([])
+
+                if branchName:
+                    command.add(['--branch', branchName])
 
                 if self.repoPort != None:
                     sshCommand.add(['-p', self.repoPort])
@@ -68,6 +71,10 @@ class Agent:
                 command.add([self.repoUrl, self.repoDestinationPath])
                 os.system(command.getAsString())
             else:
+                if branchName:
+                    command = Command(['git', 'checkout', branchName])
+                    subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
+
                 #We already cloned that repo, so second call should just run update
                 command = Command(['git', 'pull'])
                 subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
@@ -201,6 +208,7 @@ def main():
     parser = argparse.ArgumentParser(prog="Hedge Agent",
         description='Agent performing automated server configuration')
     parser.add_argument('-r', "--repository", type=str, help='URL of the repository with server configuration')
+    parser.add_argument('-b', "--branch", type=str, help="Branch for the repository", default=None)
     parser.add_argument('-m', "--module", type=str, help='Execute target from the provided module rather than from default one (hedge)', default='hedge')
     parser.add_argument('-p', "--port", type=str, help='Port of the repository with server configuration', default=None)
     parser.add_argument('-w', "--workdir", type=str, help='Location of work directory', default=None)
@@ -223,7 +231,7 @@ def main():
         return 1
 
     if not args.skip:
-        if not agent.cloneRepo():
+        if not agent.cloneRepo(args.branch):
             logging.error("Failed to clone repo")
             return 1
 

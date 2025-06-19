@@ -22,6 +22,20 @@ class TestAgent(TestBase):
         agent.cloneRepo()
         assert(os.path.isdir('/root/.hedge/testrepo'))
 
+    def testCloneFromBranch(self):
+        agent = Agent(TestBase.testDir + '/testrepo', None)
+        agent.cloneRepo("testbranch")
+        assert(os.path.isfile('/root/.hedge/testrepo/onlyonbranch/onlyonbranch.txt'))
+
+    def testCloneFromBranchAndThenCheckout(self):
+        agent = Agent(TestBase.testDir + '/testrepo', None)
+        agent.cloneRepo("testbranch")
+        #initial clone of a branch - onlyonbranch.txt file should be there
+        assert(os.path.isfile('/root/.hedge/testrepo/onlyonbranch/onlyonbranch.txt'))
+
+        #now checkout master (default) branch, onlyonbranch.txt should not be there
+        agent.cloneRepo("master")
+        assert(os.path.isfile('/root/.hedge/testrepo/onlyonbranch/onlyonbranch.txt') == False)
 
     def testCloneOurLibFromClientScript(self):
         agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
