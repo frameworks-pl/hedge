@@ -72,6 +72,9 @@ class Agent:
                 os.system(command.getAsString())
             else:
                 if branchName:
+                    command = Command(['git', 'fetch'])
+                    subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
+
                     command = Command(['git', 'checkout', branchName])
                     subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
 
