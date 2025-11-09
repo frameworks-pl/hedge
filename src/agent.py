@@ -78,6 +78,11 @@ class Agent:
                     command = Command(['git', 'checkout', branchName])
                     subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
 
+                #TODO: If repo was switched to different branch it will stay in that branch!!!
+                #      This is confusing at the moment
+                #      Workaround: ALWAYS specify branch from which to run targets
+                #      Proper fix: If branch is not specified ALWAYS switch to default branch
+
                 #We already cloned that repo, so second call should just run update
                 command = Command(['git', 'pull'])
                 subprocess.check_output(command.getArray(), cwd=self.repoDestinationPath)
