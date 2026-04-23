@@ -1,6 +1,6 @@
 import logging
 import shutil
-import os, sys, pwd, stat, grp
+import os, sys, pwd, stat, grp, re
 from basehedge import BaseHedge
 import paramiko
 from scp import SCPClient
@@ -126,5 +126,61 @@ class FileHedge(BaseHedge):
                 return
         else:
             self.log.commitFAIL()
+
+    def isLineInFile(self, destinationPath, lineToFind):
+        """
+        Checks if a specific line exists in a file.
+        Returns True if found, False otherwise.
+        """
+        # Normalize the input to avoid issues with trailing spaces/newlines
+        target = lineToFind.strip()
+        
+        try:
+            with open(destinationPath, 'r') as f:
+                for line in f:
+                    if line.strip() == target:
+                        return True
+        except FileNotFoundError:
+            return False
+            
+        return False
+
+    def ensureLineInFile(self, destinationPath, pattern, replacement):
+        """
+        Searches for a regex pattern in destinationPath and replaces the 
+        entire matching line with the replacement string.
+        """
+
+        temp_path = destinationPath + ".tmp"
+        pattern_re = re.compile(pattern)
+        found = False
+
+        with open(destinationPath, 'r') as f_in, open(temp_path, 'w') as f_out:
+            for line in f_in:
+                if pattern_re.search(line):
+                    # We found the line, write the replacement instead
+                    f_out.write(f"{replacement}\n")
+                    found = True
+                else:
+                    f_out.write(line)
+            
+            # Optional: If the pattern was never found, append the replacement
+            if not found:
+                f_out.write(f"{replacement}\n")
+
+        # Atomically replace the old file with the new one
+        try:
+            return os.replace(temp_path, destinationPath) == None
+        except FileNotFoundError:
+            logging.error("Error: The source file does not exist.")
+        except PermissionError:
+            logging.error("Error: Insufficient permissions to replace the file.")
+        except OSError as e:
+            logging.error(f"A system error occurred: {e}")
+        
+        return False
+
+# Example Usage for your SSH task:
+# regex_replace_in_file('/etc/ssh/sshd_config', r'^#?ListenAddress', 'ListenAddress 10.0.0.1')
 
         #self.log.commitOK() if os.path.isdir(destinationPath) else self.log.commitFAIL()

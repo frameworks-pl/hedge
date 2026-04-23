@@ -1,5 +1,7 @@
 import unittest
 import os, sys, re, pwd
+import shutil
+import filecmp
 srcFolder = os.path.realpath(os.getcwd() + '/../src')
 sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
@@ -77,7 +79,50 @@ class TestFileHedge(TestBase):
         with open(agent.fileBackupPath + "/tmp/{fileName}".format(fileName=backup_files[0])) as file:
             new_content = file.read()
         assert(new_content == 'abc')
-                
+
+    def testEnsureLineInFile(self):
+
+        # 1. Given original file
+        os.system('rm -rf /tmp/sshd_config*')
+        shutil.copy('./resource/sshd_config', '/tmp/sshd_config')
+        assert(os.path.isfile('/tmp/sshd_config') == True)
+
+        # 2. When I attempt to replace original line (commented out)
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.ensureLineInFile('/tmp/sshd_config', r'^#ListenAddress\s+\d+\.\d+\.\d+.\d+', 'ListenAddress 1.2.3.4')
+
+        # 3. Then line is replaced by new content
+        filecmp.clear_cache()
+        assert(filecmp.cmp('./resource/sshd_config_gold', '/tmp/sshd_config', shallow=False))
+
+    def testEnsureLineInFileWhenNoMatch(self):
+
+        # 1. Given original file
+        os.system('rm -rf /tmp/sshd_config*')
+        shutil.copy('./resource/sshd_config_no_listen', '/tmp/sshd_config_no_listen')
+        assert(os.path.isfile('/tmp/sshd_config_no_listen') == True)
+
+        # 2. When I attempt to replace line
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.ensureLineInFile('/tmp/sshd_config_no_listen', r'^#ListenAddress\s+\d+\.\d+\.\d+.\d+', 'ListenAddress 1.2.3.4')
+
+        # 3. Line is added at the end because there was no match and 
+        filecmp.clear_cache()
+        assert(filecmp.cmp('./resource/sshd_config_no_listen_gold', '/tmp/sshd_config_no_listen', shallow=False))
+
+    def testEnsureLineInFileWhenAlreadyThere(self):
+
+        # 1. Given original file
+        os.system('rm -rf /tmp/sshd_config*')
+        shutil.copy('./resource/sshd_config_already_there', '/tmp/sshd_config_already_there')
+        assert(os.path.isfile('/tmp/sshd_config_already_there') == True)
+
+        # 2. When I attempt to replace the line in file
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.ensureLineInFile('/tmp/sshd_config_already_there', r'^#ListenAddress\s+\d+\.\d+\.\d+.\d+', 'ListenAddress 3.4.5.6')
+
+        # 3. File is not changed, as content is already there
+        assert(filecmp.cmp('./resource/sshd_config_already_there', '/tmp/sshd_config_already_there', shallow=False))
 
 if __name__ == '__main__':
     unittest.main()
