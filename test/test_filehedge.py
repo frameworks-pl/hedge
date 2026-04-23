@@ -1,5 +1,7 @@
 import unittest
 import os, sys, re, pwd
+import shutil
+import filecmp
 srcFolder = os.path.realpath(os.getcwd() + '/../src')
 sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/../src/lib')
@@ -77,7 +79,18 @@ class TestFileHedge(TestBase):
         with open(agent.fileBackupPath + "/tmp/{fileName}".format(fileName=backup_files[0])) as file:
             new_content = file.read()
         assert(new_content == 'abc')
-                
+
+    def testEnsureLineInFile(self):
+
+        # 1. Given original file
+        os.system('rm -rf /tmp/sshd_config*')
+        shutil.copy('./resource/sshd_config', '/tmp/sshd_config')
+        assert(os.path.isfile('/tmp/sshd_config') == True)
+
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.ensureLineInFile('/tmp/sshd_config', r'^#ListenAddress\s+\d+\.\d+\.\d+.\d+', 'ListenAddress 1.2.3.4')
+
+        assert(filecmp.cmp('./resource/sshd_config_gold', '/tmp/sshd_config', shallow=False))
 
 if __name__ == '__main__':
     unittest.main()

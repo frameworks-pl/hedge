@@ -200,6 +200,16 @@ class Agent:
         userhedge = UserHedge(self.repoDestinationPath)
         return userhedge.ensureUserBelongsToGroup(userName, groupName)
     
+    def ensureLineInFile(self, destinationPath, regExpression, lineContent):
+        fileHedge = FileHedge(self.repoDestinationPath, self.fileBackupPath)
+        
+        #before attempting to insert new content, check if that content is not already there
+        if fileHedge.isLineInFile(destinationPath, lineContent):
+            return True
+        
+        return fileHedge.ensureLineInFile(destinationPath, regExpression, lineContent)
+        
+    
     def listTargets(self, hedge_obj):
         methods = {}
         for name, func in inspect.getmembers(hedge_obj.__class__, inspect.isfunction):
