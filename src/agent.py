@@ -11,6 +11,7 @@ srcFolder = os.path.realpath(os.getcwd())
 sys.path.insert(0, srcFolder)
 libFolder = os.path.realpath(os.getcwd() + '/lib')
 sys.path.insert(0, libFolder)
+from log import Log
 from command import Command
 from symlinkhedge import SymlinkHedge
 from apthedge import AptHedge
@@ -36,6 +37,7 @@ class Agent:
         self.verbose = verbose
         self.sshOptions = sshOptions
         self.lastHedgeObject = None
+        self.log = Log()
                 
         self.fileBackupPath = os.path.expanduser("~") + '/.hedge/backup/'  + toolkit.Toolkit.extractRepoName(self.repoUrl) + '/' + datetime.now().strftime('%Y%m%d')
         if not repoDestinationPath:
@@ -201,13 +203,18 @@ class Agent:
         return userhedge.ensureUserBelongsToGroup(userName, groupName)
     
     def ensureLineInFile(self, destinationPath, regExpression, lineContent):
+
+        self.log.addPending("{file} <- {content}".format(file=destinationPath,content=lineContent))
         fileHedge = FileHedge(self.repoDestinationPath, self.fileBackupPath)
         
         #before attempting to insert new content, check if that content is not already there
         if fileHedge.isLineInFile(destinationPath, lineContent):
+            self.log.commitOK(True)
             return True
         
-        return fileHedge.ensureLineInFile(destinationPath, regExpression, lineContent)
+        result = fileHedge.ensureLineInFile(destinationPath, regExpression, lineContent)
+        self.log.commitOK() if result else self.log.commitFAIL()
+        return result
         
     
     def listTargets(self, hedge_obj):

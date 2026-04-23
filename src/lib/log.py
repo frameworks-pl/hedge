@@ -17,21 +17,24 @@ class Log:
     def addPending(self, entry):
         self.entry = entry
 
-    def commitOK(self):
+    def commitOK(self, noChange=False):
         self.result = "OK"
         if self.autoFlush == True:
-            self.flush()        
+            self.flush(noChange)
 
     def commitFAIL(self):
         self.result = "FAIL"
         if self.autoFlush == True:
-            self.flush()        
+            self.flush()
 
-    def flush(self):
+    def flush(self, noChange=False):
         self.lastOutput = "{entry} {result}".format(entry=self.entry,result=self.result)        
         c = ""
         try:
-            c = Fore.GREEN if self.result == "OK" else Fore.RED
+            if noChange:
+                c = Fore.BLUE
+            else:
+                c = Fore.GREEN if self.result == "OK" else Fore.RED
         except:
             pass
         print(self.entry + " " + c + self.result)

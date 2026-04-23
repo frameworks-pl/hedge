@@ -150,6 +150,7 @@ class FileHedge(BaseHedge):
         Searches for a regex pattern in destinationPath and replaces the 
         entire matching line with the replacement string.
         """
+
         temp_path = destinationPath + ".tmp"
         pattern_re = re.compile(pattern)
         found = False
@@ -168,7 +169,16 @@ class FileHedge(BaseHedge):
                 f_out.write(f"{replacement}\n")
 
         # Atomically replace the old file with the new one
-        os.replace(temp_path, destinationPath)
+        try:
+            return os.replace(temp_path, destinationPath) == None
+        except FileNotFoundError:
+            logging.error("Error: The source file does not exist.")
+        except PermissionError:
+            logging.error("Error: Insufficient permissions to replace the file.")
+        except OSError as e:
+            logging.error(f"A system error occurred: {e}")
+        
+        return False
 
 # Example Usage for your SSH task:
 # regex_replace_in_file('/etc/ssh/sshd_config', r'^#?ListenAddress', 'ListenAddress 10.0.0.1')
