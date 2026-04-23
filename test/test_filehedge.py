@@ -92,5 +92,17 @@ class TestFileHedge(TestBase):
 
         assert(filecmp.cmp('./resource/sshd_config_gold', '/tmp/sshd_config', shallow=False))
 
+    def testEnsureLineInFileWhenNoMatch(self):
+
+        # 1. Given original file
+        os.system('rm -rf /tmp/sshd_config*')
+        shutil.copy('./resource/sshd_config_no_listen', '/tmp/sshd_config_no_listen')
+        assert(os.path.isfile('/tmp/sshd_config_no_listen') == True)
+
+        agent = Agent(TestBase.testDir + '/testrepo', TestBase.testDir + '/testrepoview')
+        agent.ensureLineInFile('/tmp/sshd_config_no_listen', r'^#ListenAddress\s+\d+\.\d+\.\d+.\d+', 'ListenAddress 1.2.3.4')
+
+        assert(filecmp.cmp('./resource/sshd_config_no_listen_gold', '/tmp/sshd_config_no_listen', shallow=False))
+
 if __name__ == '__main__':
     unittest.main()
