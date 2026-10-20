@@ -248,12 +248,12 @@ def main():
     repoURL = args.repository
     workDIR = args.workdir
     target = args.target
-    agent = Agent(repoURL, workDIR, args.port, False, args.sshoptions)
-    module = 'hedge'
-
     if not repoURL:
         logging.error("Missing repository URL")
         return 1
+
+    agent = Agent(repoURL, workDIR, args.port, False, args.sshoptions)
+    module = 'hedge'
 
     if not args.skip:
         if not agent.cloneRepo(args.branch):
